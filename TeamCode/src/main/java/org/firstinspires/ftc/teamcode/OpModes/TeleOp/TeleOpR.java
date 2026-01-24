@@ -89,7 +89,7 @@ public class TeleOpR extends LinearOpMode {
         transfer.retract();
 
 //        transfer.setTargetDeg(transfer.getPositionDeg());
-        transfer.targetDeg=transfer.getPositionDeg();
+//        transfer.targetDeg=transfer.getPositionDeg();
         waitForStart();
         while (opModeIsActive()){
             double sec = timer.seconds();

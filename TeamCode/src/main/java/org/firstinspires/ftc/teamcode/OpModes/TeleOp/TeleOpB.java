@@ -50,7 +50,7 @@ public class TeleOpB extends LinearOpMode {
 
     ElapsedTime shootStateTimer,sortTimer,timer;
 
-    public static Pose goalPose = new Pose(1,142);
+    public static Pose goalPose = new Pose(5,141);
     private DcMotor intake;
 
 //    private double transferTar=0;
@@ -64,6 +64,8 @@ public class TeleOpB extends LinearOpMode {
         follower.setStartingPose(new Pose(72,72,Math.toRadians(90)));
         follower.startTeleopDrive();
         follower.update();
+
+        initAprilTag(hardwareMap);
 
         turret=new Turret(hardwareMap);
 
@@ -127,6 +129,7 @@ public class TeleOpB extends LinearOpMode {
                 stateShoot=-1;
                 stateUnsorted=-1;
                 stateSorted=-1;
+                readyToShoot=false;
                 transfer.setAuto();
                 transfer.setTargetDeg(transfer.wrap360(-25),sec);
             }
@@ -142,7 +145,8 @@ public class TeleOpB extends LinearOpMode {
                 stateUnsorted=-1;
                 stateShoot=-1;
 
-            } else if (gamepad1.rightBumperWasPressed()&&stateUnsorted==-1&&readyToShoot) {
+            }
+            if (gamepad1.rightBumperWasPressed()&&stateUnsorted==-1&&!readyToShoot) {
                 readyToShoot=false;
                 intakeState=-1;
                 stateSorted=-1;
@@ -163,11 +167,12 @@ public class TeleOpB extends LinearOpMode {
 
 
             if(stateUnsorted!=-1||stateSorted!=-1||stateShoot!=-1){
+                shooter.on();
                 shooter.forDistance(dist);
             }
             if(intakeState==0){
 
-                shooter.setTarget(0);
+                shooter.off();
             }
 
             intake.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
@@ -199,6 +204,9 @@ public class TeleOpB extends LinearOpMode {
             telemetry.addData("motionTarget Transfer: ",transfer.getMotionTargetDeg());
             telemetry.addData("posTranfer: ",transfer.getPositionDeg());
             telemetry.addData("transfer power: ",transfer.getPower());
+
+            telemetry.addData("ready to shoot: ",readyToShoot);
+
 
             telemetry.addData("timer: ",timer.seconds());
             telemetry.update();
@@ -271,7 +279,7 @@ public class TeleOpB extends LinearOpMode {
             case 5:
                 transfer.setTargetDeg(transfer.wrap360(transfer.getPositionDeg() + 45), sec);
                 readyToShoot=true;
-                stateUnsorted=-1;
+                stateSorted=-1;
         }
     }
 
@@ -280,7 +288,7 @@ public class TeleOpB extends LinearOpMode {
             case -1:
                 break;
             case 0:
-                transfer.startTransfer(dist);
+                transfer.startTransfer(.9,true);
                 stateShoot =1;
                 shootStateTimer.reset();
                 break;
@@ -289,7 +297,7 @@ public class TeleOpB extends LinearOpMode {
                     transfer.endTransfer();
                     transfer.setAuto();
                     transfer.retract();
-                    shooter.setTarget(0);
+                    shooter.off();
                     readyToShoot=false;
                     stateShoot = -1;
                 }

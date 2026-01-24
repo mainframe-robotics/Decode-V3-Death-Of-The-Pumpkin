@@ -51,7 +51,7 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD )
             .strafePodX(5.37)
             .forwardPodY(-4.496);
-    public static PathConstraints pathConstraints = new PathConstraints(0.95, 0.1, 0.1, 0.011, 50, 1, 10, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.95, 0.1, 0.1, 0.011, 50, .9, 10, 1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)

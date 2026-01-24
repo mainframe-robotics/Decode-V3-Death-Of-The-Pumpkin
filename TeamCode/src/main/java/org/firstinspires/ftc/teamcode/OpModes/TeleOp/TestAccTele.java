@@ -25,15 +25,20 @@ public class TestAccTele extends LinearOpMode {
 
     Transfer transfer;
     Turret turret;
-    public static Pose goalPose = new Pose(1,142);
+
+    public static double goalX=5,goalY=141;
+
+
+    public static Pose goalPose = new Pose(goalX, goalY);
+
 
     Shooter shooter;
     Follower follower;
     private ElapsedTime timer;
 
     public static double ange=0.5;
-    public static double ball=0;
-    public static double turA=-45;
+    public static double ball=3;
+    public static double turA=0;
 
     public static double spinMult=1;
 
@@ -59,10 +64,10 @@ public class TestAccTele extends LinearOpMode {
         follower.startTeleopDrive();
         follower.update();
 
-        turret = new Turret(hardwareMap);
+//        turret = new Turret(hardwareMap);
 
-//        Servo         tur = hardwareMap.servo.get("tur");
-//        tur.setDirection(Servo.Direction.REVERSE);
+        Servo         tur = hardwareMap.servo.get("tur");
+        tur.setDirection(Servo.Direction.REVERSE);
 
 
 
@@ -73,6 +78,8 @@ public class TestAccTele extends LinearOpMode {
         waitForStart();
         while (opModeIsActive()){
             double sec = timer.seconds();
+            goalPose = new Pose(goalX, goalY);
+
 
 
 //            motor.setPower(gamepad1.left_stick_y);
@@ -104,12 +111,12 @@ public class TestAccTele extends LinearOpMode {
 //                transfer.setTargetDeg(transfer.wrap360(transfer.getPositionDeg() + 45), sec);
 //            }
 //
-//            if(gamepad1.dpadUpWasPressed()){
-//                transfer.retract();
-//            } else if (gamepad1.dpadDownWasPressed()) {
-//                transfer.score();
-//
-//            }
+            if(gamepad1.dpadUpWasPressed()){
+                transfer.retract();
+            } else if (gamepad1.dpadDownWasPressed()) {
+                transfer.score();
+
+            }
 
 //
 //            if(gamepad1.right_trigger>0){
@@ -145,7 +152,7 @@ public class TestAccTele extends LinearOpMode {
 //            shooter.forDistance(Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY()));
 //            }
 
-//            intake.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
+            intake.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
 //
 //            if(gamepad1.dpad_up){
 //                transfer.retract();
@@ -166,27 +173,28 @@ public class TestAccTele extends LinearOpMode {
 
 //            turret.setTargetDeg(turA);
 
-//            shooter.setTarget(velo);
-//            shooter.setHood(ange);
+            shooter.setTarget(velo);
+            shooter.setHood(ange);
 
-//            transfer.setManual();
-//            transfer.manualPower=gamepad1.left_stick_y*spinMult;
+            transfer.setManual();
+            transfer.manualPower=gamepad1.left_stick_y*spinMult;
 
             //.5=180/(360-37.8)
 //            double xx =ange/(360-37.8)-.0586592;
             double maxRange = 360-37.8;
 
-//            tur.setPosition(ange/maxRange+.5);
-//            telemetry.addData("pos: ",tur.getPosition());
+            tur.setPosition(turA);
+            telemetry.addData("pos: ",tur.getPosition());
 
-            turret.facePoint(goalPose,follower.getPose(),ball);
-//            transfer.update(sec);
-            turret.update();
-//            shooter.update();
+//            turret.facePoint(goalPose,follower.getPose(),ball,turA);
+            transfer.update(sec);
+//            turret.update();
+            shooter.update();
             follower.update();
             telemetry.addLine(transfer.getMapString());
             telemetry.addLine(transfer.getArrString());
             telemetry.addLine(Arrays.toString(transfer.getOrderArr()));
+
             telemetry.addData("idx: ",transfer.findBestSlot(transfer.getOrderArr(),x));
             telemetry.addData("goal: ",x);
             telemetry.addData("offset: ", transfer.offset);
@@ -206,6 +214,8 @@ public class TestAccTele extends LinearOpMode {
             telemetry.addData("ball pose y:",ballPose.getY());
             telemetry.addData("ball dist to goal:", Math.hypot(goalPose.getX()-ballPose.getX(),goalPose.getY()-ballPose.getY()));
 
+            telemetry.addData("shooter tar: ",shooter.getTarget());
+            telemetry.addData("shooter velo: ",shooter.getVelocity());
             telemetry.update();
 
         }

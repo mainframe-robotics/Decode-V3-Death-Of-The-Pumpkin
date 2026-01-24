@@ -38,11 +38,11 @@ public class Transfer {
 
     public static double offsetAngle = 0;
 
-    private double spinA = -(2.82827E-8),spinB=.0000146466, spinC=-.00267079,spinD=.196691,spinE=-3.99652;
+    private double spinA = -(3.87157E-9),spinB=0.00000132497, spinC=-0.000219294,spinD=0.0164477,spinE=0.569563;
 
     private  AnalogInput encoder;
 
-    public static double hingeUp =.395,hingeDown = .3175;
+    public static double hingeUp =.38,hingeDown = .3175;
 
     private PIDFController controller,Scontroller;
 
@@ -95,10 +95,10 @@ public class Transfer {
     }
     public void setTargetDeg(double deg,double nowTime) {
         double newdeg = wrap360(deg);
-        if(newdeg!=getTargetDeg()) {
+//        if(newdeg!=targetDeg) {
             profile.startProfile(getPositionDeg(), newdeg, nowTime);
             targetDeg = newdeg;
-        }
+//        }
     }
 
     public double getMotionTargetDeg(){return motionTargetDeg;}
@@ -278,19 +278,19 @@ public class Transfer {
     public void spinToScore(double sec) {
         double error =100000;
         double pos=0;
-        if(Math.abs(normalizeAngleDeg(getPositionDeg()-280))<error){
-            pos = 280;
-            error = Math.abs(normalizeAngleDeg(getPositionDeg()-280));
+        if(Math.abs(normalizeAngleDeg(getPositionDeg()-275))<error){
+            pos = 275;
+            error = Math.abs(normalizeAngleDeg(getPositionDeg()-275));
         }
 
-        if (Math.abs(normalizeAngleDeg(getPositionDeg()-160))<error) {
-            pos = 160;
-            error = Math.abs(normalizeAngleDeg(getPositionDeg()-160));
+        if (Math.abs(normalizeAngleDeg(getPositionDeg()-155))<error) {
+            pos = 155;
+            error = Math.abs(normalizeAngleDeg(getPositionDeg()-155));
         }
 
-        if(Math.abs(normalizeAngleDeg(getPositionDeg()-40))<error){
-            pos = 40;
-            error = Math.abs(normalizeAngleDeg(getPositionDeg()-40));
+        if(Math.abs(normalizeAngleDeg(getPositionDeg()-35))<error){
+            pos = 35;
+            error = Math.abs(normalizeAngleDeg(getPositionDeg()-35));
         }
 
         setTargetDeg(pos,sec);
@@ -462,7 +462,14 @@ public class Transfer {
 
         manualPower= -Range.clip(
                 spinA*Math.pow(distance,4)+spinB*Math.pow(distance,3)+spinC*Math.pow(distance,2)+spinD*distance+spinE
-        ,.52,1);
+                ,.52,1);
+
+    }
+    public void startTransfer(double pow,boolean custom){
+        score();
+        setManual();
+
+        manualPower= -pow;
 
     }
     public void endTransfer(){

@@ -110,7 +110,7 @@ public class Shooter {
 
     public void setHood(double x){
 //        77.5-68
-        x= Range.clip(x,68,77.5);
+        x= Range.clip(x,69,80.4);
         hoodT=(x-baseAngle)/hoodRatio;
     }
     public double getHood(){
@@ -136,17 +136,21 @@ public class Shooter {
             }
 //            motor.setVelocity(getTarget());
         }
+        else {
+            setPower(0);
+        }
     }
+
 
 
     public boolean atTarget() {
         return Math.abs((getTarget()- getVelocity())) < 200;
     }
-    //0.000535743x^{3}-0.140881x^{2}+23.03035x+1181.49666
-    public static double hoodRegA=.000535743,hoodRegB=-0.140881,hoodRegC=23.03035,hoodRegD=1181.49666;
-    //0.0000211871x^{4}-0.00729561x^{3}+0.903887x^{2}-36.64067x+2413.06297
+    //0.0000160999x^{3}-0.00688691x^{2}+0.997625x+31.73919
+    public static double hoodRegA=.0000160999,hoodRegB=-0.00688691,hoodRegC=0.997625,hoodRegD=31.73919;
 
-    public static double shooterRegA=.0000211871,shooterRegB=-0.00729561,shooterRegC=.903887,shooterRegD=-36.64067,shooterRegE=2413.06297;
+//-0.00000470743x^{4}+0.00104785x^{3}-0.0198514x^{2}+4.89724x+1749.67935
+    public static double shooterRegA=-0.00000470743,shooterRegB=0.00104785,shooterRegC=-0.0198514,shooterRegD=4.89724,shooterRegE=1749.67935;
 
 
     public void forDistanceHood(double distance){
