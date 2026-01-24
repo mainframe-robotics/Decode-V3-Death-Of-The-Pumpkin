@@ -26,11 +26,9 @@ public class TestAccTele extends LinearOpMode {
     Transfer transfer;
     Turret turret;
 
-    public static double goalX=5,goalY=141;
-
+    public static double goalX=4,goalY=140;
 
     public static Pose goalPose = new Pose(goalX, goalY);
-
 
     Shooter shooter;
     Follower follower;
@@ -42,7 +40,6 @@ public class TestAccTele extends LinearOpMode {
 
     public static double spinMult=1;
 
-//    public static Pose goalPose = new Pose(1,142);
 
     public static double velo;
     public static boolean auto =true;
@@ -64,12 +61,10 @@ public class TestAccTele extends LinearOpMode {
         follower.startTeleopDrive();
         follower.update();
 
-//        turret = new Turret(hardwareMap);
+        turret = new Turret(hardwareMap);
 
-        Servo         tur = hardwareMap.servo.get("tur");
+        Servo tur = hardwareMap.servo.get("tur");
         tur.setDirection(Servo.Direction.REVERSE);
-
-
 
 
         timer = new ElapsedTime();
@@ -80,37 +75,6 @@ public class TestAccTele extends LinearOpMode {
             double sec = timer.seconds();
             goalPose = new Pose(goalX, goalY);
 
-
-
-//            motor.setPower(gamepad1.left_stick_y);
-//            motor2.setPower(gamepad1.left_stick_y);
-//            turret.setTargetDeg(ange);
-//            if(gamepad1.aWasPressed()){
-//                transfer.scan(sec);
-//            }
-//
-//            follower.setTeleOpDrive(
-//                    -gamepad1.left_stick_y ,
-//                    -gamepad1.left_stick_x ,
-//                    -gamepad1.right_stick_x , true);
-//
-//            if(gamepad1.xWasPressed()){
-//                x="GPP";
-//                transfer.setTargetDeg(transfer.spin(x),sec);
-//            }
-//            if(gamepad1.yWasPressed()){
-//                x="PGP";
-//                transfer.setTargetDeg(transfer.spin(x),sec);
-//            }
-//            if(gamepad1.bWasPressed()){
-//                x="PPG";
-//                transfer.setTargetDeg(transfer.spin(x),sec);
-//            }
-//
-//            if(gamepad1.dpadLeftWasPressed()){
-//                transfer.setTargetDeg(transfer.wrap360(transfer.getPositionDeg() + 45), sec);
-//            }
-//
             if(gamepad1.dpadUpWasPressed()){
                 transfer.retract();
             } else if (gamepad1.dpadDownWasPressed()) {
@@ -118,60 +82,7 @@ public class TestAccTele extends LinearOpMode {
 
             }
 
-//
-//            if(gamepad1.right_trigger>0){
-//                transfer.setAuto();
-//                transfer.setTargetDeg(30,sec);
-//                transfer.retract();
-//            }
-//            if(gamepad1.xWasPressed()){
-//                transfer.setManual();
-//                transfer.manualPower=-.15;
-//            }
-//            else if(gamepad1.xWasReleased()){
-//                transfer.manualPower=0;
-//                transfer.setAuto();
-//            }
-
-//            if(gamepad1.left_trigger>0){
-//                transfer.setManual();
-//                transfer.manualPower=-gamepad1.left_trigger;
-//            }
-//            else{
-//                transfer.setAuto();
-//                transfer.manualPower=0;
-//            }
-//            if(gamepad1.left_stick_y!=0){
-//                transfer.setManual();
-//                transfer.manualPower = gamepad1.left_stick_y*spinMult;
-//            }
-//            if(auto) {
-//                shooter.setTarget(velo);
-//                shooter.setHood(ange);
-//            }else {
-//            shooter.forDistance(Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY()));
-//            }
-
             intake.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
-//
-//            if(gamepad1.dpad_up){
-//                transfer.retract();
-//            } else if (gamepad1.dpad_down) {
-//                transfer.score();
-//            }
-
-//            transfer.setManual();
-
-//            transfer.setTargetDeg(ange,sec);
-//            else {
-//                transfer.setAuto();
-//                transfer.setTargetDeg(ange,sec);
-//            }
-
-//            shooter.setHood(ange);
-
-
-//            turret.setTargetDeg(turA);
 
             shooter.setTarget(velo);
             shooter.setHood(ange);
@@ -183,14 +94,17 @@ public class TestAccTele extends LinearOpMode {
 //            double xx =ange/(360-37.8)-.0586592;
             double maxRange = 360-37.8;
 
-            tur.setPosition(turA);
+           // tur.setPosition(turA);
             telemetry.addData("pos: ",tur.getPosition());
 
-//            turret.facePoint(goalPose,follower.getPose(),ball,turA);
+            double distance = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
+            turret.facePoint(goalPose,follower.getPose(),distance,turA);
+
             transfer.update(sec);
-//            turret.update();
+            turret.update();
             shooter.update();
             follower.update();
+
             telemetry.addLine(transfer.getMapString());
             telemetry.addLine(transfer.getArrString());
             telemetry.addLine(Arrays.toString(transfer.getOrderArr()));

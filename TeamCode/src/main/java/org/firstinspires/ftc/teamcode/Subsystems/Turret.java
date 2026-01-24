@@ -92,14 +92,14 @@ public class Turret {
         return angle;
     }
     //3.02 in
-    public void facePoint(Pose targetPose, Pose robotPose,double ballOffset,double turOffset) {
-        Pose ballPose = new Pose(robotPose.getX()+ballOffset*Math.cos(robotPose.getHeading()), robotPose.getY()+ballOffset*Math.sin(robotPose.getHeading()));
-
-
-        double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
-        double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
-        setTargetDeg(robotAngleDiff+turOffset);
-    }
+//    public void facePoint(Pose targetPose, Pose robotPose,double ballOffset,double turOffset) {
+//        Pose ballPose = new Pose(robotPose.getX()+ballOffset*Math.cos(robotPose.getHeading()), robotPose.getY()+ballOffset*Math.sin(robotPose.getHeading()));
+//
+//
+//        double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
+//        double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
+//        setTargetDeg(robotAngleDiff+turOffset);
+//    }
     public void facePoint(Pose targetPose, Pose robotPose) {
         Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
 
@@ -107,6 +107,19 @@ public class Turret {
         double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
         double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
         setTargetDeg(robotAngleDiff);
+    }
+    public void facePoint(Pose targetPose, Pose robotPose, double distance, double Offset) {
+        Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
+
+
+        double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
+        double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
+        if (distance >= 117.5)
+        {
+            setTargetDeg(robotAngleDiff + Offset);
+        }else{
+            setTargetDeg(robotAngleDiff);
+        }
     }
 
     public void facePoint2(Pose targetPose, Pose robotPose) {
