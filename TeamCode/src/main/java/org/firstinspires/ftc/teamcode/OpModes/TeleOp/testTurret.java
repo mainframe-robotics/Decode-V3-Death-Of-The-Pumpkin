@@ -12,11 +12,11 @@ public class testTurret extends LinearOpMode {
 
     @Override
     public void runOpMode(){
-        Servo tur = hardwareMap.servo.get("tur");
+        Servo hinge = hardwareMap.servo.get("hinge");
 //        tur.setDirection(Servo.Direction.REVERSE);
         waitForStart();
         while(opModeIsActive()){
-            tur.setPosition(tru);
+            hinge.setPosition(tru);
         }
     }
 }

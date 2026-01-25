@@ -109,7 +109,7 @@ public class Turret {
         setTargetDeg(robotAngleDiff);
     }
     public void facePoint(Pose targetPose, Pose robotPose, double distance, double Offset) {
-        Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
+        Pose ballPose = new Pose(robotPose.getX()+1*Math.cos(robotPose.getHeading()), robotPose.getY()+0*Math.sin(robotPose.getHeading()));
 
 
         double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));

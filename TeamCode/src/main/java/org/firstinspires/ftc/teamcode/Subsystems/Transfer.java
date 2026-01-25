@@ -42,7 +42,7 @@ public class Transfer {
 
     private  AnalogInput encoder;
 
-    public static double hingeUp =.38,hingeDown = .3175;
+    public static double hingeUp =.48,hingeDown = .43;
 
     private PIDFController controller,Scontroller;
 

@@ -63,9 +63,6 @@ public class TestAccTele extends LinearOpMode {
 
         turret = new Turret(hardwareMap);
 
-        Servo tur = hardwareMap.servo.get("tur");
-        tur.setDirection(Servo.Direction.REVERSE);
-
 
         timer = new ElapsedTime();
         timer.reset();
@@ -95,10 +92,9 @@ public class TestAccTele extends LinearOpMode {
             double maxRange = 360-37.8;
 
            // tur.setPosition(turA);
-            telemetry.addData("pos: ",tur.getPosition());
 
             double distance = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
-            turret.facePoint(goalPose,follower.getPose(),distance,turA);
+            turret.facePoint(goalPose,follower.getPose(), distance, turA);
 
             transfer.update(sec);
             turret.update();

@@ -21,14 +21,10 @@ public class Shooter {
 
 //    private InterpLUT gains;
 
-
-
     private PIDFController b, s;
 
     public static double t = 0,hoodT;
     private final double hoodRatio= 37.0/540.0, servoRatio=1.0/(270.0);
-
-
 
 
     public static final double baseAngle=66.2;
@@ -39,8 +35,6 @@ public class Shooter {
     (target-base)/hoodRatio = hoodT
 
     hoodT*servoRatio= servo pos
-
-
 
      */
     public static double bp = 0.003, bd = 0.0, bf =0.00026, sp = 0.008, sd = 0.000, sf = 0.0;
