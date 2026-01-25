@@ -54,6 +54,15 @@ public class Transfer {
 
     public static double vMax=3800, aMax =2600;
 
+    private boolean spinning = false;
+
+
+    private double spinStartTime = 0;
+    private double spinDuration = 0;
+
+
+    private double spinStartPower = 0;
+    private double spinEndPower = 0;
 
 
     public Transfer(HardwareMap hardwareMap){
@@ -148,6 +157,26 @@ public class Transfer {
 
 
     public void update(double nowTime){
+        if (spinning) {
+            double t = nowTime - spinStartTime;
+            double alpha = Range.clip(t / spinDuration, 0.0, 1.0);
+
+
+            double power =
+                    spinStartPower +
+                            alpha * (spinEndPower - spinStartPower);
+
+
+            motor.setPower(power);
+
+
+            if (alpha >= 1.0) {
+                spinning = false;
+            }
+
+
+            return;
+        }
         if (on){
             controller.setCoefficients(new PIDFCoefficients(kp,ki,kd,kf));
             Scontroller.setCoefficients(new PIDFCoefficients(sp,0,sd,0));
@@ -476,6 +505,21 @@ public class Transfer {
 //        retract();
         setAuto();
         manualPower=0;
+    }
+
+    public void startSpinRamp(double startPower, double endPower, double duration, double nowTime) {
+        spinning = true;
+        spinStartTime = nowTime;
+        spinDuration = duration;
+        spinStartPower = startPower;
+        spinEndPower = endPower;
+    }
+
+    public void endSpinRamp(double nowTime) {
+        spinning = false;
+        setTargetDeg(getTargetDeg(), nowTime);
+        controller.reset();
+        Scontroller.reset();
     }
 
 
