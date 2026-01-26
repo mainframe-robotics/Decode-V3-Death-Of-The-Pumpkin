@@ -53,7 +53,9 @@ public class TeleOpB extends LinearOpMode {
     public static Pose goalPose = new Pose(5,141);
     private DcMotor intake;
 
-//    private double transferTar=0;
+    public static double startSpeed;
+    public static double endSpeed;
+    public static double duration;
 
     private boolean readyToShoot;
 
@@ -88,8 +90,6 @@ public class TeleOpB extends LinearOpMode {
 
             double sec=timer.seconds();
 
-
-
             if(gamepad1.yWasPressed()&&isSlowMode()){
                 setSlowMode();
             } else if (gamepad1.yWasPressed()&&!isSlowMode()) {
@@ -116,8 +116,6 @@ public class TeleOpB extends LinearOpMode {
             follower.update();
 
             double dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
-
-
 
 
             if(!gamepad1.dpad_right){
@@ -164,7 +162,6 @@ public class TeleOpB extends LinearOpMode {
             primeSortedBalls(sec);
             primeUnsortedBalls(sec);
             shootPrimedBalls(sec);
-
 
             if(stateUnsorted!=-1||stateSorted!=-1||stateShoot!=-1){
                 shooter.on();
@@ -226,7 +223,7 @@ public class TeleOpB extends LinearOpMode {
                 stateUnsorted=1;
                 break;
             case 1:
-                if(sortTimer.milliseconds()>500) {
+                if(sortTimer.milliseconds()>150) {
                     transfer.spinToScore(sec);
                     stateUnsorted = 2;
                 }
@@ -239,7 +236,7 @@ public class TeleOpB extends LinearOpMode {
                 }
                 break;
             case 3:
-                if(sortTimer.milliseconds()>500) {
+                if(sortTimer.milliseconds()>200) {
                     transfer.setTargetDeg(transfer.wrap360(transfer.getPositionDeg() + 45), sec);
                     readyToShoot=true;
                     stateUnsorted = -1;
@@ -288,6 +285,7 @@ public class TeleOpB extends LinearOpMode {
             case -1:
                 break;
             case 0:
+                //transfer.startSpinRamp(startSpeed,endSpeed,duration,time);
                 transfer.startTransfer(.9,true);
                 stateShoot =1;
                 shootStateTimer.reset();
@@ -295,6 +293,7 @@ public class TeleOpB extends LinearOpMode {
             case 1:
                 if(shootStateTimer.milliseconds()>1500) {
                     transfer.endTransfer();
+                    //transfer.endSpinRamp(time);
                     transfer.setAuto();
                     transfer.retract();
                     shooter.off();
