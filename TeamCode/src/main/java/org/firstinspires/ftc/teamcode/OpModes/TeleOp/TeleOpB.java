@@ -91,10 +91,9 @@ public class TeleOpB extends LinearOpMode {
             double sec=timer.seconds();
 
             if(gamepad1.yWasPressed()&&isSlowMode()){
-                setSlowMode();
-            } else if (gamepad1.yWasPressed()&&!isSlowMode()) {
                 setFastMode();
-
+            } else if (gamepad1.yWasPressed()&&!isSlowMode()) {
+                setSlowMode();
             }
             follower.setTeleOpDrive(
                     -gamepad1.left_stick_y*driveMult ,
