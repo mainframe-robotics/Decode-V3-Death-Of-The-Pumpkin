@@ -271,10 +271,13 @@ public class Blue15BallClose extends OpMode {
 
     public boolean shooterOn=false;
 
+    private double turTarg;
+
 
     public void autonomousPathUpdate(double sec,double dist) {
         switch (pathState) {
             case 0:
+                turTarg=120;
                 transfer.retract();
                 follower.followPath(scorePreload);
                 shooterOn=true;
@@ -356,6 +359,7 @@ public class Blue15BallClose extends OpMode {
 //                    transfer.setTargetDeg(30,opmodeTimer.getElapsedTimeSeconds());
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
 //                    intake.setPower(0);
+                    turTarg=120;
                     transfer.retract();
                     shooterOn=true;
                     follower.followPath(scoreSet1, true);
@@ -456,6 +460,7 @@ public class Blue15BallClose extends OpMode {
                     /* Grab Sample */
 //                    transfer.setTargetDeg(30,opmodeTimer.getElapsedTimeSeconds());
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                    turTarg=120;
                     transfer.retract();
                     shooterOn=true;
                     follower.followPath(scoreSet3, true);
@@ -526,6 +531,7 @@ public class Blue15BallClose extends OpMode {
                     /* Score Sample */
 //                    transfer.setTargetDeg(240, opmodeTimer.getElapsedTimeSeconds());
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    turTarg=120;
                     transfer.retract();
                     shooterOn=true;
                     follower.followPath(scoreSet4, true);
@@ -618,7 +624,8 @@ public class Blue15BallClose extends OpMode {
 ////            shooter.setTarget(0);
 //            shooter.forDistanceHood(goalDistance);
 //        }
-        turret.facePoint(goalPose,follower.getPose());
+//        turret.facePoint(goalPose,follower.getPose());
+        turret.setTargetDeg(turTarg);
 
         intake.setPower(-1);
 //
