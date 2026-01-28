@@ -101,7 +101,7 @@ public class TeleOpB extends LinearOpMode {
                     -gamepad1.right_stick_x*rotateMult , true);
             if(gamepad1.dpad_right){
                 setRobotPoseFromCamera();
-                turret.setTargetDeg(120);
+                turret.setTargetDeg(150);
             }
             else{
                 turret.facePoint(goalPose,follower.getPose());

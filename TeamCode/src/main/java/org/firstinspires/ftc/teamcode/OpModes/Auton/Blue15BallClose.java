@@ -39,7 +39,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 @Config
-@TeleOp(name = "Blue15Ball", group = "Examples")
+@Autonomous(name = "Blue15Ball", group = "Examples")
 public class Blue15BallClose extends OpMode {
 
     private Follower follower;
@@ -277,7 +277,7 @@ public class Blue15BallClose extends OpMode {
     public void autonomousPathUpdate(double sec,double dist) {
         switch (pathState) {
             case 0:
-                turTarg=120;
+                turTarg=54;
                 transfer.retract();
                 follower.followPath(scorePreload);
                 shooterOn=true;
@@ -314,7 +314,7 @@ public class Blue15BallClose extends OpMode {
                 }
                 break;
             case 105:
-                if(pathTimer.getElapsedTimeSeconds()>2){
+                if(pathTimer.getElapsedTimeSeconds()>1){
                     transfer.endTransfer();
                     transfer.setAuto();
                     transfer.retract();
@@ -359,7 +359,7 @@ public class Blue15BallClose extends OpMode {
 //                    transfer.setTargetDeg(30,opmodeTimer.getElapsedTimeSeconds());
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
 //                    intake.setPower(0);
-                    turTarg=120;
+                    //turTarg=55;
                     transfer.retract();
                     shooterOn=true;
                     follower.followPath(scoreSet1, true);
@@ -400,7 +400,7 @@ public class Blue15BallClose extends OpMode {
                 }
                 break;
             case 305:
-                if(pathTimer.getElapsedTimeSeconds()>2){
+                if(pathTimer.getElapsedTimeSeconds()>1){
                     transfer.endTransfer();
                     transfer.setAuto();
                     transfer.retract();
@@ -460,7 +460,7 @@ public class Blue15BallClose extends OpMode {
                     /* Grab Sample */
 //                    transfer.setTargetDeg(30,opmodeTimer.getElapsedTimeSeconds());
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    turTarg=120;
+                    //turTarg=55;
                     transfer.retract();
                     shooterOn=true;
                     follower.followPath(scoreSet3, true);
@@ -501,7 +501,7 @@ public class Blue15BallClose extends OpMode {
                 }
                 break;
             case 705:
-                if(pathTimer.getElapsedTimeSeconds()>2){
+                if(pathTimer.getElapsedTimeSeconds()>1){
                     transfer.endTransfer();
                     transfer.setAuto();
                     transfer.retract();
@@ -531,7 +531,7 @@ public class Blue15BallClose extends OpMode {
                     /* Score Sample */
 //                    transfer.setTargetDeg(240, opmodeTimer.getElapsedTimeSeconds());
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    turTarg=120;
+                    turTarg=43;
                     transfer.retract();
                     shooterOn=true;
                     follower.followPath(scoreSet4, true);
@@ -571,7 +571,7 @@ public class Blue15BallClose extends OpMode {
                 }
                 break;
             case 905:
-                if(pathTimer.getElapsedTimeSeconds()>2){
+                if(pathTimer.getElapsedTimeSeconds()>1){
                     transfer.endTransfer();
                     transfer.setAuto();
                     transfer.retract();

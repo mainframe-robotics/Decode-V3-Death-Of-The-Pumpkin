@@ -72,7 +72,7 @@ public class Turret {
         return a;
     }
     public void setTargetDeg(double angleDeg) {
-        target=angleDeg/maxRange+.5;
+        target=(angleDeg/maxRange+.5)*(58/57);
     }
 
 
