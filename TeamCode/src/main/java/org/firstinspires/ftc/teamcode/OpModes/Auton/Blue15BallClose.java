@@ -107,8 +107,8 @@ public class Blue15BallClose extends OpMode {
 
         /* This is our scorePickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
         scoreSet1 = follower.pathBuilder()
-                .addPath(new BezierLine(intake1Pose, shoot2Pose))
-                .setLinearHeadingInterpolation(intake1Pose.getHeading(),shoot2Pose.getHeading())
+                .addPath(new BezierLine(gatePose, shoot2Pose))
+                .setLinearHeadingInterpolation(gatePose.getHeading(),shoot2Pose.getHeading())
                 .setVelocityConstraint(.05)
                 .setTimeoutConstraint(200)
                 .addParametricCallback(0.0,()->follower.setMaxPower(1))
@@ -337,19 +337,19 @@ public class Blue15BallClose extends OpMode {
                     transfer.retract();
                     transfer.setTargetDeg(transfer.wrap360(-25),sec);
                     follower.followPath(intakeSet1, true);
+                    setPathState(12);
+                }
+                break;
+            case 12:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
+                    /* Grab Sample */
+//                    transfer.setTargetDeg(30,opmodeTimer.getElapsedTimeSeconds());
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+//                    intake.setPower(0);
+                    follower.followPath(hitGate, true);
                     setPathState(2);
                 }
                 break;
-//            case 12:
-//                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1) {
-//                    /* Grab Sample */
-////                    transfer.setTargetDeg(30,opmodeTimer.getElapsedTimeSeconds());
-//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-////                    intake.setPower(0);
-//                    follower.followPath(hitGate, true);
-//                    setPathState(2);
-//                }
-//                break;
             case 2:
 //                intake.setPower(-1);
 
