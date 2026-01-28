@@ -1,89 +1,127 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.control.PIDFCoefficients;
+import com.pedropathing.control.PIDFController;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
-@Config
 public class Turret {
-    private Servo tur;
+    private CRServo motor;
+    private DcMotorEx encoder;
+    public static double ticksPerDeg = 2.2; // 384.5 * (170/80d) (??????????)
 
-    private static double gearRatio = 1;///((100.0/30.0)*(70.0/190));
-    private static double maxRange = 360-37.8;
+    private PIDFController bigC,smallC;
 
-    private static final double SERVO_RANGE_DEG = 360.0 - 37.8; // 322.2
-    private static final double SERVO_CENTER = 0.525;
-
-    private static final double SERVO_NEG_90 = 0.26;
-    private static final double SERVO_POS_90 = 0.81;
-
-    private static final double MAX_NEG_ANGLE = -90.0;
-    private static final double MAX_POS_ANGLE = 90.0;
+    public static double bigKp=.013,bigKi=0,bigKd=0.0009,bigKf=0,smallKp=0.036;
 
 
+    public static boolean on = true;
+    private boolean manual = false;
 
-    public static double offset = 0;
+    public static double target =0;
+    private double manualPower;
+    public static double lowerLimit =-15,upperLimit=22;
 
-    public static double target;
-    private double positionDeg;
+    private double prevMotor;
 
-    public Turret(HardwareMap hardwareMap) {
-        tur = hardwareMap.servo.get("tur");
-        tur.setDirection(Servo.Direction.REVERSE);
 
-    }
-    private static double clamp(double val, double min, double max) {
-        return Math.max(min, Math.min(max, val));
-    }
 
-    public static double angleToServo(double angle) {
-        double DEAD = 18.9;
-        double TOTAL = 322.2;
-        double HALF = 180 - DEAD;   // 161.1
+    public Turret(HardwareMap hardwareMap){
+        motor=hardwareMap.get(CRServo.class,"tur");
+        motor.setDirection(CRServo.Direction.REVERSE);
 
-        // Clamp dead zone
-        if (angle > -DEAD && angle < DEAD) {
-            angle = (angle >= 0) ? DEAD : -DEAD;
-        }
+        encoder=hardwareMap.get(DcMotorEx.class,"int");
 
-        double shifted;
-        if (angle >= DEAD) {
-            // [18.9 .. 180] → [0 .. 161.1]
-            shifted = angle - DEAD;
-        } else {
-            // [-180 .. -18.9] → [161.1 .. 322.2]
-            shifted = HALF + (angle + 180);
-        }
 
-        return shifted / TOTAL;
-    }
 
-    public double getPositionDeg() {
-        return (tur.getPosition()-.525)*maxRange;
+        PIDFCoefficients bigCoff = new PIDFCoefficients(bigKp, bigKi, bigKd, bigKf);
+        PIDFCoefficients smallCoff = new PIDFCoefficients(0, 0, 0, 0);
+
+        bigC= new PIDFController(bigCoff);
+        smallC = new PIDFController(smallCoff);
 
 
     }
 
-    private double wrap360(double angleDeg) {
-        double a = angleDeg % 360.0;
-        if (a < 0) a += 360.0;
-        return a;
+    private void setTarget(double x){
+        target= Range.clip(x,lowerLimit,upperLimit);
     }
-    public void setTargetDeg(double angleDeg) {
-        target=(angleDeg/maxRange+.5)*(58/57);
+    public double getTarget(){
+        return target;
     }
 
+    public double getPosition(){
+        return -encoder.getCurrentPosition() / ticksPerDeg;
+    }
 
+    public double getNormalixedPos(){ return normalizeAngle(getPosition());}
 
-    public double getTargetDeg() {
-        return (target-.525)*maxRange;
+    public double getPower(){return motor.getPower();}
+
+    public boolean atTarget(){
+        return Math.abs(getTarget()-getPosition())<2;
     }
 
     public void update(){
-        tur.setPosition(target);
+        if (on){
+            if (manual){
+                motor.setPower(manualPower);
+                return;
+            }
+            PIDFCoefficients bigCoff = new PIDFCoefficients(bigKp, bigKi, bigKd, bigKf);
+            PIDFCoefficients smallCoff = new PIDFCoefficients(0, 0, 0, 0);
+            bigC.setCoefficients(bigCoff);
+            smallC.setCoefficients(smallCoff);
+            target= Range.clip(target,lowerLimit,upperLimit);
+            bigC.updateError(target-getPosition());
+
+            double powr = bigC.run();
+            if(Math.abs(bigC.getError())<10){
+                powr=bigC.getError()*smallKp;
+            }
+
+//            if(Math.abs(powr-prevMotor)>.05){
+            motor.setPower(powr);
+//                prevMotor=(powr);
+//            }
+
+        }
+        else{
+            motor.setPower(0);
+        }
     }
+
+    public void manual(double power) {
+        manual = true;
+        manualPower = power;
+    }
+
+    public void automatic() {
+        manual = false;
+    }
+
+    public void on() {
+        on = true;
+    }
+
+    public void off() {
+        on = false;
+    }
+
+    public void setYaw(double deg) {
+        deg = normalizeAngle(deg);
+        setTarget(deg);
+    }
+
+
+
     public static double normalizeAngle(double deg) {
 
         double angle = deg % 360.0;
@@ -91,22 +129,16 @@ public class Turret {
         if (angle > 180) angle -= 360;
         return angle;
     }
-    //3.02 in
-//    public void facePoint(Pose targetPose, Pose robotPose,double ballOffset,double turOffset) {
-//        Pose ballPose = new Pose(robotPose.getX()+ballOffset*Math.cos(robotPose.getHeading()), robotPose.getY()+ballOffset*Math.sin(robotPose.getHeading()));
-//
-//
-//        double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
-//        double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
-//        setTargetDeg(robotAngleDiff+turOffset);
-//    }
+
+
+
     public void facePoint(Pose targetPose, Pose robotPose) {
         Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
 
 
         double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
         double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
-        setTargetDeg(robotAngleDiff);
+        setYaw(robotAngleDiff);
     }
     public void facePoint(Pose targetPose, Pose robotPose, double distance, double Offset) {
         Pose ballPose = new Pose(robotPose.getX()+1*Math.cos(robotPose.getHeading()), robotPose.getY()+0*Math.sin(robotPose.getHeading()));
@@ -116,9 +148,9 @@ public class Turret {
         double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
         if (distance >= 117.5)
         {
-            setTargetDeg(robotAngleDiff + Offset);
+            setYaw(robotAngleDiff + Offset);
         }else{
-            setTargetDeg(robotAngleDiff);
+            setYaw(robotAngleDiff);
         }
     }
 
@@ -138,8 +170,7 @@ public class Turret {
                 angleToTarget - Math.toDegrees(robotPose.getHeading())
         );
 
-        setTargetDeg(turretAngle);
+        setYaw(turretAngle);
     }
-
 
 }

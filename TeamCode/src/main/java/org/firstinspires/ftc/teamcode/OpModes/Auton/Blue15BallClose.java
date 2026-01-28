@@ -625,7 +625,7 @@ public class Blue15BallClose extends OpMode {
 //            shooter.forDistanceHood(goalDistance);
 //        }
 //        turret.facePoint(goalPose,follower.getPose());
-        turret.setTargetDeg(turTarg);
+        turret.setYaw(turTarg);
 
         intake.setPower(-1);
 //
