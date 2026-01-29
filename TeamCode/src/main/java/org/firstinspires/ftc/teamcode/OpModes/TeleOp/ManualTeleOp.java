@@ -252,7 +252,7 @@ public class ManualTeleOp extends LinearOpMode {
             telemetry.addData("targetshooter: ",shooter.getTarget());
             telemetry.addData("targetTranfer: ",transfer.getTargetDeg());
             telemetry.addData("posTranfer: ",transfer.getPositionDeg());
-            telemetry.addData("targetTuttet: ",turret.getTargetDeg());
+            telemetry.addData("targetTuttet: ",turret.getTarget());
             telemetry.addData("transferManual: ",transfer.on);
 
 

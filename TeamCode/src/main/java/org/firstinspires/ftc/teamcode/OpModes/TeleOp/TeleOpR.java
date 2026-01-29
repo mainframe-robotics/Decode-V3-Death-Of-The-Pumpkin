@@ -232,7 +232,7 @@ public class TeleOpR extends LinearOpMode {
 
             if(gamepad1.right_bumper) {
                 setRobotPoseFromCamera();
-                turret.setTargetDeg(-120);
+                turret.setYaw(-120);
             }else{
                 turret.facePoint(goalPose,follower.getPose());
             }
@@ -313,7 +313,7 @@ public class TeleOpR extends LinearOpMode {
             telemetry.addData("targetshooter: ",shooter.getTarget());
             telemetry.addData("targetTranfer: ",transfer.getTargetDeg());
             telemetry.addData("posTranfer: ",transfer.getPositionDeg());
-            telemetry.addData("targetTuttet: ",turret.getTargetDeg());
+            telemetry.addData("targetTuttet: ",turret.getTarget());
             telemetry.addData("transferManual: ",transfer.on);
 
 

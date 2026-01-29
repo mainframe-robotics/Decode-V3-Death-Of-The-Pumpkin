@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ftc.InvertedFTCCoordinates;
 import com.pedropathing.ftc.PoseConverter;
@@ -62,6 +64,8 @@ public class TeleOpB extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(72,72,Math.toRadians(90)));
         follower.startTeleopDrive();
@@ -101,7 +105,7 @@ public class TeleOpB extends LinearOpMode {
                     -gamepad1.right_stick_x*rotateMult , true);
             if(gamepad1.dpad_right){
                 setRobotPoseFromCamera();
-                turret.setTargetDeg(150);
+                turret.setYaw(150);
             }
             else{
                 turret.facePoint(goalPose,follower.getPose());

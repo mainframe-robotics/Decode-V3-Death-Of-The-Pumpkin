@@ -19,6 +19,9 @@ public class testMotor extends LinearOpMode {
         Turret turret =new Turret(hardwareMap);
 
         DcMotor spin = hardwareMap.dcMotor.get("spin");
+
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         /*
@@ -32,7 +35,7 @@ public class testMotor extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()){
-            turret.setTargetDeg(0);
+            turret.setYaw(0);
             double frPower = (gamepad1.a)?1:0;
             double flPower = (gamepad1.b)?1:0;
             double brPower = (gamepad1.x)?1:0;

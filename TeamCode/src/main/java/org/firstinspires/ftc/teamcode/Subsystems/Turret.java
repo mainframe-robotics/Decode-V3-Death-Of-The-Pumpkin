@@ -15,11 +15,11 @@ import com.qualcomm.robotcore.util.Range;
 public class Turret {
     private CRServo motor;
     private DcMotorEx encoder;
-    public static double ticksPerDeg = 2.2; // 384.5 * (170/80d) (??????????)
+    public static double ticksPerDeg = 1; // 384.5 * (170/80d) (??????????)
 
     private PIDFController bigC,smallC;
 
-    public static double bigKp=.013,bigKi=0,bigKd=0.0009,bigKf=0,smallKp=0.036;
+    public static double bigKp=.0,bigKi=0,bigKd=0.000,bigKf=0,smallKp=0.0;
 
 
     public static boolean on = true;
@@ -35,9 +35,9 @@ public class Turret {
 
     public Turret(HardwareMap hardwareMap){
         motor=hardwareMap.get(CRServo.class,"tur");
-        motor.setDirection(CRServo.Direction.REVERSE);
+//        motor.setDirection(CRServo.Direction.REVERSE);
 
-        encoder=hardwareMap.get(DcMotorEx.class,"int");
+        encoder=hardwareMap.get(DcMotorEx.class,"fr");
 
 
 

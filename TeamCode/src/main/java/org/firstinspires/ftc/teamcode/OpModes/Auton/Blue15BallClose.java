@@ -81,6 +81,7 @@ public class Blue15BallClose extends OpMode {
     private int pathState;
     private Path scorePreload;
     private PathChain intakeSet1, scoreSet1,hitGate, intakeSet2, scoreSet2, intakeSet3, scoreSet3,intakeSet4,scoreSet4;
+    private double intPow;
 
     public void buildPaths() {
         /* This is our scorePreload path. We are using a BezierLine, which is a straight line. */
@@ -277,6 +278,7 @@ public class Blue15BallClose extends OpMode {
     public void autonomousPathUpdate(double sec,double dist) {
         switch (pathState) {
             case 0:
+                intPow=-1;
                 turTarg=54;
                 transfer.retract();
                 follower.followPath(scorePreload);
@@ -335,6 +337,7 @@ public class Blue15BallClose extends OpMode {
                     /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
                     transfer.retract();
                     transfer.retract();
+                    intPow=-1;
                     transfer.setTargetDeg(transfer.wrap360(-25),sec);
                     follower.followPath(intakeSet1, true);
                     setPathState(12);
@@ -370,6 +373,7 @@ public class Blue15BallClose extends OpMode {
             case 300:
                 if(pathTimer.getElapsedTimeSeconds()>2){
 //                    intake.setPower(0);
+//                    intPow=1;
                     transfer.spinToScore(sec);
                     setPathState(301);
 
@@ -379,6 +383,8 @@ public class Blue15BallClose extends OpMode {
                 if (transfer.atTarget()){
                     transfer.score();
                     setPathState(302);
+                } else if (pathTimer.getElapsedTimeSeconds()>3) {
+                    intPow=1;
                 }
                 break;
             case 302:
@@ -391,6 +397,9 @@ public class Blue15BallClose extends OpMode {
             case 303:
                 if(!follower.isBusy()&&shooter.atTarget()&& transfer.atTarget()){
                     setPathState(304);
+                }
+                else if (pathTimer.getElapsedTimeSeconds()>3) {
+                    intPow=1;
                 }
                 break;
             case 304:
@@ -405,6 +414,7 @@ public class Blue15BallClose extends OpMode {
                     transfer.setAuto();
                     transfer.retract();
                     transfer.setTargetDeg(transfer.wrap360(-25),sec);
+                    intPow=-1;
                     shooterOn=false;
                     setPathState(5);
                 }
@@ -471,6 +481,7 @@ public class Blue15BallClose extends OpMode {
             case 700:
                 if(pathTimer.getElapsedTimeSeconds()>2){
 //                    intake.setPower(0);
+//                    intPow=1;
                     transfer.spinToScore(sec);
                     setPathState(701);
 
@@ -482,6 +493,9 @@ public class Blue15BallClose extends OpMode {
                     transfer.score();
                     setPathState(702);
                 }
+                else if (pathTimer.getElapsedTimeSeconds()>3) {
+                    intPow=1;
+                }
                 break;
             case 702:
                 if(pathTimer.getElapsedTimeSeconds()>1){
@@ -492,6 +506,9 @@ public class Blue15BallClose extends OpMode {
             case 703:
                 if(!follower.isBusy()&&shooter.atTarget()&& transfer.atTarget()){
                     setPathState(704);
+                }
+                else if (pathTimer.getElapsedTimeSeconds()>3) {
+                    intPow=1;
                 }
                 break;
             case 704:
@@ -506,6 +523,7 @@ public class Blue15BallClose extends OpMode {
                     transfer.setAuto();
                     transfer.retract();
                     transfer.setTargetDeg(transfer.wrap360(-25),sec);
+                    intPow=-1;
                     shooterOn=false;
                     setPathState(7);
                 }
@@ -552,6 +570,9 @@ public class Blue15BallClose extends OpMode {
                     transfer.score();
                     setPathState(902);
                 }
+                else if (pathTimer.getElapsedTimeSeconds()>3) {
+                    intPow=1;
+                }
                 break;
             case 902:
                 if(pathTimer.getElapsedTimeSeconds()>1){
@@ -562,6 +583,9 @@ public class Blue15BallClose extends OpMode {
             case 903:
                 if(!follower.isBusy()&&shooter.atTarget()&& transfer.atTarget()){
                     setPathState(904);
+                }
+                else if (pathTimer.getElapsedTimeSeconds()>3) {
+                    intPow=1;
                 }
                 break;
             case 904:
@@ -584,6 +608,7 @@ public class Blue15BallClose extends OpMode {
                 /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
                     /* Set the state to a Case we won't use or define, so it just stops running an new paths */
+                    intPow=0;
                     setPathState(-1);
                 }
                 break;
@@ -627,7 +652,8 @@ public class Blue15BallClose extends OpMode {
 //        turret.facePoint(goalPose,follower.getPose());
         turret.setYaw(turTarg);
 
-        intake.setPower(-1);
+
+        intake.setPower(intPow);
 //
         turret.update();
         transfer.update(sec);
