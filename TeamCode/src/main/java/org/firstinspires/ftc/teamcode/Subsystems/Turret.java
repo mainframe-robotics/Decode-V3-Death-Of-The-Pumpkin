@@ -12,14 +12,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+@Config
 public class Turret {
     private CRServo motor;
     private DcMotorEx encoder;
-    public static double ticksPerDeg = 1; // 384.5 * (170/80d) (??????????)
+    public static double ticksPerDeg = 720.0/53669.0; // 384.5 * (170/80d) (??????????)
 
     private PIDFController bigC,smallC;
 
-    public static double bigKp=.0,bigKi=0,bigKd=0.000,bigKf=0,smallKp=0.0;
+    public static double bigKp=0.024,bigKi=0,bigKd=0.0014,bigKf=0,smallKp=0.05,smallKd=0.0007;
 
 
     public static boolean on = true;
@@ -27,7 +28,7 @@ public class Turret {
 
     public static double target =0;
     private double manualPower;
-    public static double lowerLimit =-15,upperLimit=22;
+    public static double lowerLimit =-180,upperLimit=135;
 
     private double prevMotor;
 
@@ -58,7 +59,7 @@ public class Turret {
     }
 
     public double getPosition(){
-        return -encoder.getCurrentPosition() / ticksPerDeg;
+        return (-encoder.getCurrentPosition()/8192.0)*(58.0/190.0)*360.0;
     }
 
     public double getNormalixedPos(){ return normalizeAngle(getPosition());}
@@ -76,15 +77,16 @@ public class Turret {
                 return;
             }
             PIDFCoefficients bigCoff = new PIDFCoefficients(bigKp, bigKi, bigKd, bigKf);
-            PIDFCoefficients smallCoff = new PIDFCoefficients(0, 0, 0, 0);
+            PIDFCoefficients smallCoff = new PIDFCoefficients(smallKp, 0, smallKd, 0);
             bigC.setCoefficients(bigCoff);
             smallC.setCoefficients(smallCoff);
             target= Range.clip(target,lowerLimit,upperLimit);
             bigC.updateError(target-getPosition());
+            smallC.updateError(target-getPosition());
 
             double powr = bigC.run();
-            if(Math.abs(bigC.getError())<10){
-                powr=bigC.getError()*smallKp;
+            if(Math.abs(bigC.getError())<4){
+                powr=smallC.run();
             }
 
 //            if(Math.abs(powr-prevMotor)>.05){
@@ -132,26 +134,30 @@ public class Turret {
 
 
 
-    public void facePoint(Pose targetPose, Pose robotPose) {
+    public void facePoint(Pose targetPose, Pose robotPose,double distance) {
         Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
-
+        if(distance>=117.5){
+            targetPose = new Pose(targetPose.getX()+8,targetPose.getY()+0);
+        }
 
         double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
         double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
         setYaw(robotAngleDiff);
     }
-    public void facePoint(Pose targetPose, Pose robotPose, double distance, double Offset) {
-        Pose ballPose = new Pose(robotPose.getX()+1*Math.cos(robotPose.getHeading()), robotPose.getY()+0*Math.sin(robotPose.getHeading()));
-
-
+    public void facePoint(Pose targetPose, Pose robotPose, double distance, double Offsetx,double Offsety) {
+        Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
+        if(distance>=117.5){
+            targetPose = new Pose(targetPose.getX()+Offsetx,targetPose.getY()+Offsety);
+        }
         double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
         double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
-        if (distance >= 117.5)
-        {
-            setYaw(robotAngleDiff + Offset);
-        }else{
-            setYaw(robotAngleDiff);
-        }
+//        if (distance >= 117.5)
+//        {
+//            setYaw(robotAngleDiff + Offset);
+//        }else{
+//            setYaw(robotAngleDiff);
+//        }
+        setYaw(robotAngleDiff);
     }
 
     public void facePoint2(Pose targetPose, Pose robotPose) {

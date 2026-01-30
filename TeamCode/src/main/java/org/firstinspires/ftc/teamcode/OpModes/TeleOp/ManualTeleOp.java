@@ -189,11 +189,11 @@ public class ManualTeleOp extends LinearOpMode {
                     -gamepad1.left_stick_x*driveMult ,
                     -gamepad1.right_stick_x*rotateMult , true);
 //
-            turret.facePoint(goalPose,follower.getPose());
+
 
 
             double dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
-
+            turret.facePoint(goalPose,follower.getPose(),dist);
             if(gamepad1.bWasPressed()){
                 shootState=-1;
                 intakeState=0;

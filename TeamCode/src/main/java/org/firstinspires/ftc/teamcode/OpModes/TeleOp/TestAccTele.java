@@ -37,6 +37,8 @@ public class TestAccTele extends LinearOpMode {
     public static double ange=0.5;
     public static double ball=3;
     public static double turA=0;
+    public static double offX=0;
+    public static double offY=0;
 
     public static double spinMult=1;
 
@@ -94,7 +96,8 @@ public class TestAccTele extends LinearOpMode {
            // tur.setPosition(turA);
 
             double distance = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
-            turret.facePoint(goalPose,follower.getPose(), distance, turA);
+
+            turret.facePoint(goalPose,follower.getPose(), distance, offX,offY);
 
             transfer.update(sec);
             turret.update();
@@ -113,6 +116,9 @@ public class TestAccTele extends LinearOpMode {
             telemetry.addData("posTranferRaw: ",transfer.getPosition());
             telemetry.addData("posTranferAbs: ",transfer.getPositionDegAbs());
 
+
+
+
             telemetry.addData("follower pose x:",follower.getPose().getX());
             telemetry.addData("follower pose y:",follower.getPose().getY());
             telemetry.addData("follower pose h:",Math.toDegrees(follower.getPose().getHeading()));
@@ -126,6 +132,8 @@ public class TestAccTele extends LinearOpMode {
 
             telemetry.addData("shooter tar: ",shooter.getTarget());
             telemetry.addData("shooter velo: ",shooter.getVelocity());
+            telemetry.addData("turret tar: ",turret.getTarget());
+            telemetry.addData("turret velo: ",turret.getPosition());
             telemetry.update();
 
         }

@@ -460,7 +460,7 @@ public class Blue12BallClose extends OpMode {
 //            shooter.setTarget(0);
             shooter.forDistanceHood(goalDistance);
         }
-        turret.facePoint(goalPose,follower.getPose());
+        turret.facePoint(goalPose,follower.getPose(),goalDistance);
 
         turret.update();
         transfer.update(sec);

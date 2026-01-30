@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -22,15 +23,21 @@ public class testTurret extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 //        Servo hinge = hardwareMap.servo.get("hinge");
 //        CRServo tur =hardwareMap.crservo.get("tur");
-//        Turret turret = new Turret(hardwareMap);
-        DcMotorEx enc = hardwareMap.get(DcMotorEx.class,"fr");
+        Turret turret = new Turret(hardwareMap);
+//        DcMotorEx enc = hardwareMap.get(DcMotorEx.class,"fr");
+//        enc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
 //        tur.setDirection(Servo.Direction.REVERSE);
         waitForStart();
         while(opModeIsActive()){
 //            turret.update();
-            telemetry.addData("power: ", enc.getCurrentPosition());
+            telemetry.addData("pos: ", turret.getPosition());
+            telemetry.addData("target: ", turret.getTarget());
+            telemetry.addData("touchpad 1 x: ", gamepad1.touchpad_finger_1_x);
+            telemetry.addData("touchpad 1 y: ", gamepad1.touchpad_finger_1_y);
+            telemetry.addData("touchpad 2 x: ", gamepad1.touchpad_finger_2_x);
+            telemetry.addData("touchpad 2 y: ", gamepad1.touchpad_finger_2_y);
             telemetry.update();
         }
     }

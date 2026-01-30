@@ -234,7 +234,7 @@ public class TeleOpR extends LinearOpMode {
                 setRobotPoseFromCamera();
                 turret.setYaw(-120);
             }else{
-                turret.facePoint(goalPose,follower.getPose());
+                turret.facePoint(goalPose,follower.getPose(),dist);
             }
             if(gamepad1.left_bumper){
                 follower.setPose(new Pose(72,72,Math.toRadians(90)));

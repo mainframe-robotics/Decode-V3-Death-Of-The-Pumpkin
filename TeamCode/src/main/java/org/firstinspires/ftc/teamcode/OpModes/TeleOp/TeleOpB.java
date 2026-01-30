@@ -52,7 +52,7 @@ public class TeleOpB extends LinearOpMode {
 
     ElapsedTime shootStateTimer,sortTimer,timer;
 
-    public static Pose goalPose = new Pose(5,141);
+    public static Pose goalPose = new Pose(6,140);
     private DcMotor intake;
 
     public static double startSpeed;
@@ -60,6 +60,8 @@ public class TeleOpB extends LinearOpMode {
     public static double duration;
 
     private boolean readyToShoot;
+
+    private boolean turLock;
 
 
     @Override
@@ -103,12 +105,15 @@ public class TeleOpB extends LinearOpMode {
                     -gamepad1.left_stick_y*driveMult ,
                     -gamepad1.left_stick_x*driveMult ,
                     -gamepad1.right_stick_x*rotateMult , true);
+
+            double dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
+
             if(gamepad1.dpad_right){
                 setRobotPoseFromCamera();
-                turret.setYaw(150);
+                turret.setYaw(-135);
             }
             else{
-                turret.facePoint(goalPose,follower.getPose());
+                turret.facePoint(goalPose,follower.getPose(),dist);
             }
 
             if(gamepad1.dpad_left){
@@ -118,11 +123,10 @@ public class TeleOpB extends LinearOpMode {
 
             follower.update();
 
-            double dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
 
 
             if(!gamepad1.dpad_right){
-                turret.facePoint(goalPose,follower.getPose());
+                turret.facePoint(goalPose,follower.getPose(),dist);
             }
 
             if(gamepad1.bWasPressed()){
@@ -176,6 +180,18 @@ public class TeleOpB extends LinearOpMode {
             }
 
             intake.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
+
+            if(readyToShoot){
+                if (!gamepad1.isRumbling())  // Check for possible overlap of rumbles.
+                    gamepad1.rumbleBlips(3);
+            }
+
+            if(gamepad1.touchpadWasPressed()){
+                turLock=!turLock;
+            }
+            if(turLock){
+                turret.setYaw(0);
+            }
 
 
 
@@ -289,7 +305,7 @@ public class TeleOpB extends LinearOpMode {
                 break;
             case 0:
                 //transfer.startSpinRamp(startSpeed,endSpeed,duration,time);
-                transfer.startTransfer(.9,true);
+                transfer.startTransfer(dist);
                 stateShoot =1;
                 shootStateTimer.reset();
                 break;

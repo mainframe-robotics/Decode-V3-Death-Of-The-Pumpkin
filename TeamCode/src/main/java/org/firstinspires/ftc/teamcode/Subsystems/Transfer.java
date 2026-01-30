@@ -38,7 +38,7 @@ public class Transfer {
 
     public static double offsetAngle = 0;
 
-    private double spinA = -(3.87157E-9),spinB=0.00000132497, spinC=-0.000219294,spinD=0.0164477,spinE=0.569563;
+    private double spinA = (8.765E-7),spinB=-0.00023861, spinC=0.0157672,spinD=0.702433;
 
     private  AnalogInput encoder;
 
@@ -490,8 +490,8 @@ public class Transfer {
         setManual();
 
         manualPower= -Range.clip(
-                spinA*Math.pow(distance,4)+spinB*Math.pow(distance,3)+spinC*Math.pow(distance,2)+spinD*distance+spinE
-                ,.52,1);
+                spinA*Math.pow(distance,3)+spinB*Math.pow(distance,2)+spinC*Math.pow(distance,1)+spinD
+                ,.6,1);
 
     }
     public void startTransfer(double pow,boolean custom){

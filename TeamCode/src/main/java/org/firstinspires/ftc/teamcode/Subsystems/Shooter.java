@@ -140,11 +140,11 @@ public class Shooter {
     public boolean atTarget() {
         return Math.abs((getTarget()- getVelocity())) < 200;
     }
-    //y=-0.0000734461x^{2}+0.175443x+62.1176
-    public static double hoodRegA=0.0000734461,hoodRegB=0.175443,hoodRegC=62.1176;
+    //-0.00190711x^{2}+0.438204x+56.27323
+    public static double hoodRegA=-0.00190711,hoodRegB=0.438204,hoodRegC=56.27323;
 
-//y=-0.004219x^{2}+10.07929x+1697.00181
-    public static double shooterRegA=-0.004219,shooterRegB=10.07929,shooterRegC=1697.00181;
+    //y=0.0510743x^{2}+1.90001x+1975.57062
+    public static double shooterRegA=0.0510743,shooterRegB=1.90001,shooterRegC=1975.57062;
 
 
     public void forDistanceHood(double distance){
