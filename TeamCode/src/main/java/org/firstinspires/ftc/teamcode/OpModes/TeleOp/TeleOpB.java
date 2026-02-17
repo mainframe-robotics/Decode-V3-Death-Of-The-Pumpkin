@@ -71,6 +71,7 @@ public class TeleOpB extends LinearOpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(new Pose(72,72,Math.toRadians(90)));
         follower.startTeleopDrive();
+
         follower.update();
 
         initAprilTag(hardwareMap);
@@ -102,13 +103,13 @@ public class TeleOpB extends LinearOpMode {
                 setSlowMode();
             }
             follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y*driveMult ,
-                    -gamepad1.left_stick_x*driveMult ,
+                    gamepad1.left_stick_y*driveMult ,
+                    gamepad1.left_stick_x*driveMult ,
                     -gamepad1.right_stick_x*rotateMult , true);
 
             double dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
 
-            if(gamepad1.dpad_right){
+            if(gamepad1.dpad_up){
                 setRobotPoseFromCamera();
                 turret.setYaw(-135);
             }
@@ -116,8 +117,8 @@ public class TeleOpB extends LinearOpMode {
                 turret.facePoint(goalPose,follower.getPose(),dist);
             }
 
-            if(gamepad1.dpad_left){
-                follower.setPose(new Pose(72,72,Math.toRadians(90)));
+            if(gamepad1.dpad_down){
+                follower.setPose(new Pose(133.67,9,Math.toRadians(90)));
             }
 
 
@@ -125,7 +126,7 @@ public class TeleOpB extends LinearOpMode {
 
 
 
-            if(!gamepad1.dpad_right){
+            if(!gamepad1.dpad_up){
                 turret.facePoint(goalPose,follower.getPose(),dist);
             }
 
@@ -136,7 +137,12 @@ public class TeleOpB extends LinearOpMode {
                 stateSorted=-1;
                 readyToShoot=false;
                 transfer.setAuto();
-                transfer.setTargetDeg(transfer.wrap360(-25),sec);
+                transfer.setTargetDeg(transfer.wrap360(-30),sec);
+            }
+
+            if(gamepad1.dpadRightWasPressed()&&!readyToShoot&&intakeState==0){
+                transfer.setAuto();
+                transfer.setTargetDeg(transfer.wrap360(-30-105),sec);
             }
 
             if(intakeState!=-1&&stateSorted==-1&&stateUnsorted==-1&& stateShoot ==-1){
@@ -168,7 +174,7 @@ public class TeleOpB extends LinearOpMode {
 
             primeSortedBalls(sec);
             primeUnsortedBalls(sec);
-            shootPrimedBalls(sec);
+            shootPrimedBalls(dist,sec);
 
             if(stateUnsorted!=-1||stateSorted!=-1||stateShoot!=-1){
                 shooter.on();
@@ -183,7 +189,7 @@ public class TeleOpB extends LinearOpMode {
 
             if(readyToShoot){
                 if (!gamepad1.isRumbling())  // Check for possible overlap of rumbles.
-                    gamepad1.rumbleBlips(3);
+                    gamepad1.rumbleBlips(5);
             }
 
             if(gamepad1.touchpadWasPressed()){
@@ -299,7 +305,7 @@ public class TeleOpB extends LinearOpMode {
         }
     }
 
-    public void shootPrimedBalls(double dist){
+    public void shootPrimedBalls(double dist,double sec){
         switch (stateShoot){
             case -1:
                 break;
@@ -317,6 +323,8 @@ public class TeleOpB extends LinearOpMode {
                     transfer.retract();
                     shooter.off();
                     readyToShoot=false;
+                    transfer.setAuto();
+                    transfer.setTargetDeg(transfer.wrap360(-20),sec);
                     stateShoot = -1;
                 }
                 break;
@@ -338,9 +346,18 @@ public class TeleOpB extends LinearOpMode {
         rotateMult=.5;
     }
 
+    public static double camX = 0;
+    public static double camY = -3.25;
+    public static double camZ = 8.25;
+
     private Position cameraPosition = new Position(DistanceUnit.INCH,
-            0, -3.25, 8.25, 0);
-    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES, 180, -65, 180, 0);
+            camX, camY, camZ, 0);
+
+    public static double camYaw = 180;
+    public static double camPitch = -65;
+    public static double camRoll = 180;
+
+    private YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES, camYaw, camPitch, camRoll, 0);
 
     private AprilTagProcessor aprilTag;
 
@@ -386,6 +403,11 @@ public class TeleOpB extends LinearOpMode {
                     myX = detection.robotPose.getPosition().x;
                     myY = detection.robotPose.getPosition().y;
                     myYaw = detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES);
+
+
+                        if (!gamepad1.isRumbling())  // Check for possible overlap of rumbles.
+                            gamepad1.rumbleBlips(5);
+
 //                    sleep(500);
                 }
             }

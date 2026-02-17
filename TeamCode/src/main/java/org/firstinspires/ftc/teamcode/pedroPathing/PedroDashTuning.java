@@ -46,4 +46,6 @@ public class PedroDashTuning {
             0.6,
             0.01
     );
+
+    public static double centri=.005;
 }

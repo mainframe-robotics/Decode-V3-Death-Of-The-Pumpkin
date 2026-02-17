@@ -27,8 +27,8 @@ public class Constants {
             .drivePIDFCoefficients(PedroDashTuning.drive)
             .secondaryDrivePIDFCoefficients(PedroDashTuning.secondaryDrive)
             .holdPointHeadingScaling(0.6)
-            .holdPointTranslationalScaling(1)
-            ;
+            .holdPointTranslationalScaling(1);
+//            .centripetalScaling(PedroDashTuning.centri);
 
 
     public static MecanumConstants driveConstants = new MecanumConstants()
@@ -37,11 +37,11 @@ public class Constants {
             .rightRearMotorName("br")
             .leftRearMotorName("bl")
             .leftFrontMotorName("fl")
-            .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(73.81)
+            .xVelocity(75.81)
             .yVelocity(61.175);
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .distanceUnit(DistanceUnit.INCH)

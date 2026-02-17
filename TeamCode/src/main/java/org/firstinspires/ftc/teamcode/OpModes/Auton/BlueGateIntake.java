@@ -240,7 +240,7 @@ public class BlueGateIntake extends OpMode {
                     intPow=0;
                     transfer.retract();
                     transfer.retract();
-                    transfer.setTargetDeg(transfer.wrap360(-25),sec);
+                    transfer.setTargetDeg(transfer.wrap360(-20),sec);
                     follower.followPath(intakePrimeSet2, true);
 
                     setPathState(4);

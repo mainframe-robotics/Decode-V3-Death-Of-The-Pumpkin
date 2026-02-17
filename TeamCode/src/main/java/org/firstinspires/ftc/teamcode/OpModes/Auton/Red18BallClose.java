@@ -36,8 +36,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 
 @Config
-@Autonomous(name = "Blue12Ball", group = "Examples")
-public class Blue12BallClose extends OpMode {
+@Autonomous(name = "Red18Ball", group = "Examples")
+public class Red18BallClose extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
@@ -47,46 +47,46 @@ public class Blue12BallClose extends OpMode {
     public static double goalX=5,goalY=141.4;
 
 
-    public static Pose goalPose = new Pose(goalX,goalY);
+    public static Pose goalPose = new Pose(goalX,goalY).mirror();
 
-    private final Pose startPose = new Pose(24.86825056902067, 125.70476862389272, Math.toRadians(141.2697451694792));
-    private final Pose shoot1Pose = new Pose(63, 75, Math.toRadians(180));
-    private final Pose intake1Pose = new Pose(20, 59, Math.toRadians(180));
-    private final Pose intake1PoseControl = new Pose(50, 60);
+    private final Pose startPose = new Pose(23.38, 125.18377760519193, Math.toRadians(139.8)).mirror();
+    private final Pose shoot1Pose = new Pose(63, 75, Math.toRadians(180)).mirror();
+    private final Pose intake1Pose = new Pose(20, 59, Math.toRadians(180)).mirror();
+    private final Pose intake1PoseControl = new Pose(50, 60).mirror();
 
 //    private final Pose gatePose = new Pose(18, 71, Math.toRadians(180));
 
-    private final Pose shoot2Pose = new Pose(63, 75, Math.toRadians(180));//old x: 50, y: 83.4
+    private final Pose shoot2Pose = new Pose(63, 75, Math.toRadians(180)).mirror();//old x: 50, y: 83.4
 
-    private final Pose intake2PrimePose = new Pose(13, 66, Math.toRadians(175));
-    private final Pose intake2Pose = new Pose(10, 50, Math.toRadians(100));
+    private final Pose intake2PrimePose = new Pose(13, 66, Math.toRadians(175)).mirror();
+    private final Pose intake2Pose = new Pose(10, 50, Math.toRadians(100)).mirror();
 
-    private final Pose intake2ControlPose = new Pose(19,56);
+    private final Pose intake2ControlPose = new Pose(19,56).mirror();
 
 
 //    private final Pose intake2PoseControl = new Pose(41, 31.5);
 
 
-    private final Pose shoot3Pose = new Pose(63, 75, Math.toRadians(180));// old x: 70, y: 74
+    private final Pose shoot3Pose = new Pose(63, 75, Math.toRadians(180)).mirror();// old x: 70, y: 74
 
-    private final Pose intake3PrimePose = new Pose(18, 68, Math.toRadians(175));
-    private final Pose intake3Pose = new Pose(10, 50, Math.toRadians(100));
+    private final Pose intake3PrimePose = new Pose(18, 68, Math.toRadians(175)).mirror();
+    private final Pose intake3Pose = new Pose(10, 50, Math.toRadians(100)).mirror();
 
-    private final Pose intake3ControlPose = new Pose(19,56);
+    private final Pose intake3ControlPose = new Pose(19,56).mirror();
 
-    private final Pose shoot4Pose = new Pose(63, 75, Math.toRadians(180));// old x: 70, y: 74
+    private final Pose shoot4Pose = new Pose(63, 75, Math.toRadians(180)).mirror();// old x: 70, y: 74
 
-    private final Pose intake4Pose = new Pose(20, 36, Math.toRadians(180));
+    private final Pose intake4Pose = new Pose(20, 36, Math.toRadians(180)).mirror();
 
-    private final Pose intake4PoseControl = new Pose(52, 35);
+    private final Pose intake4PoseControl = new Pose(52, 35).mirror();
 
-    private final Pose shoot5Pose = new Pose(61, 84, Math.toRadians(180));// old x: 70, y: 74
+    private final Pose shoot5Pose = new Pose(61, 84, Math.toRadians(180)).mirror();// old x: 70, y: 74
 
 
-    private final Pose intake5Pose = new Pose(21, 84, Math.toRadians(180));
+    private final Pose intake5Pose = new Pose(21, 84, Math.toRadians(180)).mirror();
     //    private final Pose intake2PoseControl = new Pose(41, 31.5);
-    private final Pose shoot6Pose = new Pose(63, 84, Math.toRadians(180));// old x: 70, y: 74
-    private final Pose leavePose = new Pose(40,84,Math.toRadians(180));
+    private final Pose shoot6Pose = new Pose(63, 84, Math.toRadians(180)).mirror();// old x: 70, y: 74
+    private final Pose leavePose = new Pose(56,84,Math.toRadians(180)).mirror();
 
     private int pathState;
     private PathChain scorePreload,intakeSet1, scoreSet1,intakeSet2,intakePrimeSet2, scoreSet2, intakeSet3,intakePrimeSet3, scoreSet3,intakeSet4,scoreSet4,intakeSet5,scoreSet5,leave;
@@ -119,32 +119,32 @@ public class Blue12BallClose extends OpMode {
                 .addPath(new BezierLine(intake1Pose, shoot2Pose))
                 .setTangentHeadingInterpolation()
                 .addParametricCallback(0.0,()->follower.setMaxPower(1))
-                .addParametricCallback(.7,()->follower.setMaxPower(.17))
+                .addParametricCallback(.7,()->follower.setMaxPower(.25))
                 .setReversed()
                 .build();
 
-//        intakePrimeSet2=follower.pathBuilder()
-//                .addPath(new BezierLine(shoot2Pose,intake2PrimePose))
-//                .setLinearHeadingInterpolation(shoot2Pose.getHeading(),intake2PrimePose.getHeading())
-//                .addParametricCallback(0.0,()->follower.setMaxPower(1))
-//                .addParametricCallback(.6,()->follower.setMaxPower(.25))
-//                .build();
-//
-//        /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
-//        intakeSet2 = follower.pathBuilder()
-//                .addPath(new BezierCurve(intake2PrimePose,intake2ControlPose, intake2Pose))
-//                .setLinearHeadingInterpolation(intake2PrimePose.getHeading(),intake2Pose.getHeading())
-//                .addParametricCallback(0.0,()->follower.setMaxPower(1))
-//
-//                .build();
-//
-//        /* This is our scorePickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
-//        scoreSet2 = follower.pathBuilder()
-//                .addPath(new BezierLine(intake2Pose, shoot4Pose))
-//                .setLinearHeadingInterpolation(intake2Pose.getHeading(),shoot4Pose.getHeading())
-//                .addParametricCallback(0.0,()->follower.setMaxPower(1))
-//                .addParametricCallback(.8,()->follower.setMaxPower(.35))
-//                .build();
+        intakePrimeSet2=follower.pathBuilder()
+                .addPath(new BezierLine(shoot2Pose,intake2PrimePose))
+                .setLinearHeadingInterpolation(shoot2Pose.getHeading(),intake2PrimePose.getHeading())
+                .addParametricCallback(0.0,()->follower.setMaxPower(1))
+                .addParametricCallback(.6,()->follower.setMaxPower(.25))
+                .build();
+
+        /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        intakeSet2 = follower.pathBuilder()
+                .addPath(new BezierCurve(intake2PrimePose,intake2ControlPose, intake2Pose))
+                .setLinearHeadingInterpolation(intake2PrimePose.getHeading(),intake2Pose.getHeading())
+                .addParametricCallback(0.0,()->follower.setMaxPower(1))
+
+                .build();
+
+        /* This is our scorePickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        scoreSet2 = follower.pathBuilder()
+                .addPath(new BezierLine(intake2Pose, shoot4Pose))
+                .setLinearHeadingInterpolation(intake2Pose.getHeading(),shoot4Pose.getHeading())
+                .addParametricCallback(0.0,()->follower.setMaxPower(1))
+                .addParametricCallback(.8,()->follower.setMaxPower(.35))
+                .build();
 
 //        intakePrimeSet3=follower.pathBuilder()
 //                .addPath(new BezierLine(shoot3Pose,intake3PrimePose))
@@ -173,7 +173,7 @@ public class Blue12BallClose extends OpMode {
 
 
         intakeSet4 = follower.pathBuilder()
-                .addPath(new BezierCurve(shoot2Pose,intake4PoseControl,intake4Pose))
+                .addPath(new BezierCurve(shoot4Pose,intake4PoseControl,intake4Pose))
                 .setTangentHeadingInterpolation()
                 .addParametricCallback(0.0,()->follower.setMaxPower(1))
                 .build();
@@ -206,8 +206,6 @@ public class Blue12BallClose extends OpMode {
         leave = follower.pathBuilder()
                 .addPath(new BezierLine(shoot6Pose, leavePose))
                 .setLinearHeadingInterpolation(shoot6Pose.getHeading(), leavePose.getHeading())
-                .addParametricCallback(0.0,()->follower.setMaxPower(1))
-
                 .build();
 
 
@@ -378,7 +376,7 @@ public class Blue12BallClose extends OpMode {
                 break;
 
             case 300:
-                if(pathTimer.getElapsedTimeSeconds()>2){
+                if(pathTimer.getElapsedTimeSeconds()>1.2){
 //                    intake.setPower(0);
 //                    intPow=1;
                     transfer.spinToScore(sec);
@@ -423,101 +421,101 @@ public class Blue12BallClose extends OpMode {
                     transfer.setTargetDeg(transfer.wrap360(-20),sec);
                     intPow=-1;
                     shooterOn=false;
-                    setPathState(8);
+                    setPathState(3);
                 }
                 break;
 
 
-//            case 3:
-//                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-//                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0) {
-//                    /* Score Sample */
-////                    transfer.setTargetDeg(240,opmodeTimer.getElapsedTimeSeconds());
-//
-//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-//
-//                    intPow=0;
-//                    transfer.retract();
-//                    transfer.retract();
-//                    transfer.setTargetDeg(transfer.wrap360(-20),sec);
-//                    follower.followPath(intakePrimeSet2, true);
-//
-//                    setPathState(4);
-//                }
-//                break;
-//            case 4:
-//                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
-//                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > .5) {
-//                    /* Grab Sample */
-////                    transfer.setTargetDeg(30,opmodeTimer.getElapsedTimeSeconds());
-//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-//                    intPow=-1;
-//                    follower.followPath(intakeSet2, true);
-//                    setPathState(45);
-//                }
-//                break;
-//            case 45:
-//                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
-//                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
-//                    /* Grab Sample */
-////                    transfer.setTargetDeg(30,opmodeTimer.getElapsedTimeSeconds());
-//                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-//                    turTarg=54;
-//                    shooterOn=true;
-//                    follower.followPath(scoreSet2, true);
-//                    setPathState(500);
-//                }
-//                break;
-//            case 500:
-//                if(pathTimer.getElapsedTimeSeconds()>0&&follower.getCurrentTValue()>.08){
-////                    intake.setPower(0);
-//                    intPow=1;
-//                    transfer.spinToScore(sec);
-//                    setPathState(501);
-//
-//                }
-//                break;
-//            case 501:
-//                if (transfer.atTarget()){
-////                    intake.setPower(0);
-//                    transfer.score();
-//                    setPathState(502);
-//                }
-//                else if (pathTimer.getElapsedTimeSeconds()>1) {
-//                    intPow=1;
-//                }
-//                break;
-//            case 502:
-//                if(pathTimer.getElapsedTimeSeconds()>1){
-//                    transfer.setTargetDeg(transfer.wrap360(transfer.getPositionDeg() + 45), sec);
-//                    setPathState(503);
-//                }
-//                break;
-//            case 503:
-//                if(!follower.isBusy()&&shooter.atTarget()&& transfer.atTarget()&&turret.atTarget()){
-//                    setPathState(504);
-//                }
-//                else if (pathTimer.getElapsedTimeSeconds()>1) {
-//                    intPow=1;
-//                }
-//                break;
-//            case 504:
-//                if(pathTimer.getElapsedTimeSeconds()>.25){
-//                    transfer.startTransfer(dist);
-//                    setPathState(505);
-//                }
-//                break;
-//            case 505:
-//                if(pathTimer.getElapsedTimeSeconds()>1){
-//                    transfer.endTransfer();
-//                    transfer.setAuto();
-//                    transfer.retract();
-//                    transfer.setTargetDeg(transfer.wrap360(-20),sec);
-//                    intPow=-1;
-//                    shooterOn=false;
-//                    setPathState(8);
-//                }
-//                break;
+            case 3:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0) {
+                    /* Score Sample */
+//                    transfer.setTargetDeg(240,opmodeTimer.getElapsedTimeSeconds());
+
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+
+                    intPow=0;
+                    transfer.retract();
+                    transfer.retract();
+                    transfer.setTargetDeg(transfer.wrap360(-20),sec);
+                    follower.followPath(intakePrimeSet2, true);
+
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > .5) {
+                    /* Grab Sample */
+//                    transfer.setTargetDeg(30,opmodeTimer.getElapsedTimeSeconds());
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                    intPow=-1;
+                    follower.followPath(intakeSet2, true);
+                    setPathState(45);
+                }
+                break;
+            case 45:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
+                    /* Grab Sample */
+//                    transfer.setTargetDeg(30,opmodeTimer.getElapsedTimeSeconds());
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                    turTarg=54;
+                    shooterOn=true;
+                    follower.followPath(scoreSet2, true);
+                    setPathState(500);
+                }
+                break;
+            case 500:
+                if(pathTimer.getElapsedTimeSeconds()>0&&follower.getCurrentTValue()>.08){
+//                    intake.setPower(0);
+                    intPow=1;
+                    transfer.spinToScore(sec);
+                    setPathState(501);
+
+                }
+                break;
+            case 501:
+                if (transfer.atTarget()){
+//                    intake.setPower(0);
+                    transfer.score();
+                    setPathState(502);
+                }
+                else if (pathTimer.getElapsedTimeSeconds()>1) {
+                    intPow=1;
+                }
+                break;
+            case 502:
+                if(pathTimer.getElapsedTimeSeconds()>1){
+                    transfer.setTargetDeg(transfer.wrap360(transfer.getPositionDeg() + 45), sec);
+                    setPathState(503);
+                }
+                break;
+            case 503:
+                if(!follower.isBusy()&&shooter.atTarget()&& transfer.atTarget()&&turret.atTarget()){
+                    setPathState(504);
+                }
+                else if (pathTimer.getElapsedTimeSeconds()>1) {
+                    intPow=1;
+                }
+                break;
+            case 504:
+                if(pathTimer.getElapsedTimeSeconds()>.25){
+                    transfer.startTransfer(dist);
+                    setPathState(505);
+                }
+                break;
+            case 505:
+                if(pathTimer.getElapsedTimeSeconds()>1){
+                    transfer.endTransfer();
+                    transfer.setAuto();
+                    transfer.retract();
+                    transfer.setTargetDeg(transfer.wrap360(-20),sec);
+                    intPow=-1;
+                    shooterOn=false;
+                    setPathState(8);
+                }
+                break;
 
 //            case 5:
 //                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
@@ -722,7 +720,7 @@ public class Blue12BallClose extends OpMode {
                 }
                 break;
             case 1200:
-                if(pathTimer.getElapsedTimeSeconds()>2){
+                if(pathTimer.getElapsedTimeSeconds()>1.2){
 //                    intake.setPower(0);
                     transfer.spinToScore(sec);
                     setPathState(1201);
@@ -774,7 +772,6 @@ public class Blue12BallClose extends OpMode {
                 if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
                     /* Set the state to a Case we won't use or define, so it just stops running an new paths */
                     intPow=0;
-                    follower.followPath(leave,true);
                     setPathState(-1);
                 }
                 break;
@@ -797,7 +794,7 @@ public class Blue12BallClose extends OpMode {
         // These loop the movements of the robot, these must be called continuously in order to work
         follower.update();
         double goalDistance = Math.hypot(goalPose.getX() - follower.getPose().getX(), goalPose.getY() - follower.getPose().getY());
-        goalPose=new Pose(goalX,goalY);
+        goalPose=new Pose(goalX,goalY).mirror();
         autonomousPathUpdate(sec,goalDistance);
         if(shooterOn){
             shooter.forDistance(goalDistance);

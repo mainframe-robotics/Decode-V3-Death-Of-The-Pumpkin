@@ -42,7 +42,7 @@ public class Transfer {
 
     private  AnalogInput encoder;
 
-    public static double hingeUp =.48,hingeDown = .43;
+    public static double hingeUp = .41,hingeDown = .35;
 
     private PIDFController controller,Scontroller;
 
@@ -75,7 +75,7 @@ public class Transfer {
         slot3=hardwareMap.get(RevColorSensorV3.class,"slot3");
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        encoder = hardwareMap.get(AnalogInput.class, "sp1");
+//        encoder = hardwareMap.get(AnalogInput.class, "sp1");
 
 
         timer=new ElapsedTime();

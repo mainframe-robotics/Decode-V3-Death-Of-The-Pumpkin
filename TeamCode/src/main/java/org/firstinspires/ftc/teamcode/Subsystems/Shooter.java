@@ -37,9 +37,9 @@ public class Shooter {
     hoodT*servoRatio= servo pos
 
      */
-    public static double bp = 0.003, bd = 0.0, bf =0.00026, sp = 0.008, sd = 0.000, sf = 0.0;
+    public static double bp = 0.002, bd = 0.0, bf =0.000185, sp = 0.002, sd = 0.000, sf = 0.0;
 
-    public static double pSwitch = 300;
+    public static double pSwitch = 200;
 
     public static double close = .1,far =.8;
     private boolean activated = true;
@@ -60,7 +60,7 @@ public class Shooter {
         motor = hardwareMap.get(DcMotorEx.class, "shootL");
         motor2 = hardwareMap.get(DcMotorEx.class, "shootR");
 
-        hood = hardwareMap.get(Servo.class,"hood1");
+        hood = hardwareMap.get(Servo.class,"hood");
         //r = hardwareMap.get(DcMotorEx.class, "sr");
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor2.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -138,7 +138,7 @@ public class Shooter {
 
 
     public boolean atTarget() {
-        return Math.abs((getTarget()- getVelocity())) < 200;
+        return Math.abs((getTarget()- getVelocity())) < 100;
     }
     //-0.00190711x^{2}+0.438204x+56.27323
     public static double hoodRegA=-0.00190711,hoodRegB=0.438204,hoodRegC=56.27323;
@@ -154,6 +154,11 @@ public class Shooter {
 
         setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
         setTarget(shooterRegA*Math.pow(distance,2)+shooterRegB*Math.pow(distance,1)+shooterRegC);
+    }
+    public void forDistance(double distance,double offset) {
+
+        setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
+        setTarget(shooterRegA*Math.pow(distance,2)+shooterRegB*Math.pow(distance,1)+shooterRegC+offset);
     }
 
 

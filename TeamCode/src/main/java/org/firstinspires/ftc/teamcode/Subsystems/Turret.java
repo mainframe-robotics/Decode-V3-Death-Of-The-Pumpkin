@@ -21,7 +21,7 @@ public class Turret {
     private PIDFController bigC,smallC;
 
     public static double bigKp=0.024,bigKi=0,bigKd=0.0014,bigKf=0,smallKp=0.05,smallKd=0.0007;
-
+//    public static double bigKp=0.035,bigKi=0,bigKd=0.0025,bigKf=0,smallKp=0.06,smallKi,smallKd=0.001,smallKf;
 
     public static boolean on = true;
     private boolean manual = false;
@@ -38,7 +38,7 @@ public class Turret {
         motor=hardwareMap.get(CRServo.class,"tur");
 //        motor.setDirection(CRServo.Direction.REVERSE);
 
-        encoder=hardwareMap.get(DcMotorEx.class,"fr");
+        encoder=hardwareMap.get(DcMotorEx.class,"bl");
 
 
 
@@ -100,6 +100,8 @@ public class Turret {
         }
     }
 
+
+
     public void manual(double power) {
         manual = true;
         manualPower = power;
@@ -134,7 +136,7 @@ public class Turret {
 
 
 
-    public void facePoint(Pose targetPose, Pose robotPose,double distance) {
+    public double facePoint(Pose targetPose, Pose robotPose,double distance) {
         Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
         if(distance>=117.5){
             targetPose = new Pose(targetPose.getX()+8,targetPose.getY()+0);
@@ -143,6 +145,7 @@ public class Turret {
         double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
         double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
         setYaw(robotAngleDiff);
+        return robotAngleDiff;
     }
     public void facePoint(Pose targetPose, Pose robotPose, double distance, double Offsetx,double Offsety) {
         Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));

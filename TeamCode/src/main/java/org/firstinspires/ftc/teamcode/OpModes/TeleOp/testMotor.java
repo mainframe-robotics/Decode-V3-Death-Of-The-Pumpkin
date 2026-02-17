@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 
@@ -16,26 +17,24 @@ public class testMotor extends LinearOpMode {
         DcMotor bl = hardwareMap.dcMotor.get("bl");
         DcMotor br = hardwareMap.dcMotor.get("br");
 
-        Turret turret =new Turret(hardwareMap);
+//        Turret turret =new Turret(hardwareMap);
 
         DcMotor spin = hardwareMap.dcMotor.get("spin");
 
-        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        /*
-        fr->bl
-        fl->fl
-        br->br
-        bl->fr
-         */
+        fr.setDirection(DcMotorSimple.Direction.FORWARD);
+        br.setDirection(DcMotorSimple.Direction.FORWARD);
+        fl.setDirection(DcMotorSimple.Direction.REVERSE);
+        bl.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
         waitForStart();
         while (opModeIsActive()){
-            turret.setYaw(0);
+//            turret.setYaw(0);
             double frPower = (gamepad1.a)?1:0;
             double flPower = (gamepad1.b)?1:0;
             double brPower = (gamepad1.x)?1:0;
@@ -46,7 +45,7 @@ public class testMotor extends LinearOpMode {
             br.setPower(brPower);
             bl.setPower(blPower);
 
-            turret.update();
+//            turret.update();
 
 
 

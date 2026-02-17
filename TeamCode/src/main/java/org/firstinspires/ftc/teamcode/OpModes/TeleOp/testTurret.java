@@ -31,9 +31,15 @@ public class testTurret extends LinearOpMode {
 //        tur.setDirection(Servo.Direction.REVERSE);
         waitForStart();
         while(opModeIsActive()){
-//            turret.update();
+            turret.update();
+
+            if(gamepad1.aWasPressed()){
+                if (!gamepad1.isRumbling())  // Check for possible overlap of rumbles.
+                    gamepad1.rumbleBlips(5);
+            }
             telemetry.addData("pos: ", turret.getPosition());
             telemetry.addData("target: ", turret.getTarget());
+            telemetry.addData("pow: ", turret.getPower());
             telemetry.addData("touchpad 1 x: ", gamepad1.touchpad_finger_1_x);
             telemetry.addData("touchpad 1 y: ", gamepad1.touchpad_finger_1_y);
             telemetry.addData("touchpad 2 x: ", gamepad1.touchpad_finger_2_x);
