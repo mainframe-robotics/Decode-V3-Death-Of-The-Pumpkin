@@ -89,11 +89,11 @@ public class TestAccTele extends LinearOpMode {
             transfer.setManual();
             transfer.manualPower=gamepad1.left_stick_y*spinMult;
 
-            //.5=180/(360-37.8)
-//            double xx =ange/(360-37.8)-.0586592;
+//            .5=180/(360-37.8)
+            double xx =ange/(360-37.8)-.0586592;
             double maxRange = 360-37.8;
-
-           // tur.setPosition(turA);
+//
+            turret.setYaw(turA);
 
             double distance = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
 
@@ -114,7 +114,7 @@ public class TestAccTele extends LinearOpMode {
             telemetry.addData("targetTranfer: ",transfer.getTargetDeg());
             telemetry.addData("posTranfer: ",transfer.getPositionDeg());
             telemetry.addData("posTranferRaw: ",transfer.getPosition());
-            telemetry.addData("posTranferAbs: ",transfer.getPositionDegAbs());
+//            telemetry.addData("posTranferAbs: ",transfer.getPositionDegAbs());
 
 
 

@@ -16,12 +16,13 @@ public class testMotor extends LinearOpMode {
         DcMotor fl = hardwareMap.dcMotor.get("fl");
         DcMotor bl = hardwareMap.dcMotor.get("bl");
         DcMotor br = hardwareMap.dcMotor.get("br");
+        DcMotor intake = hardwareMap.dcMotor.get("int");
 
 //        Turret turret =new Turret(hardwareMap);
 
         DcMotor spin = hardwareMap.dcMotor.get("spin");
 
-        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 

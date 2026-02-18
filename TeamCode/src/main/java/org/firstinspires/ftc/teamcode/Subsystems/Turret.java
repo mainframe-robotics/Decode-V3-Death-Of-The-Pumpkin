@@ -28,7 +28,7 @@ public class Turret {
 
     public static double target =0;
     private double manualPower;
-    public static double lowerLimit =-180,upperLimit=135;
+    public static double lowerLimit =-90,upperLimit=90;
 
     private double prevMotor;
 
@@ -38,7 +38,7 @@ public class Turret {
         motor=hardwareMap.get(CRServo.class,"tur");
 //        motor.setDirection(CRServo.Direction.REVERSE);
 
-        encoder=hardwareMap.get(DcMotorEx.class,"bl");
+        encoder=hardwareMap.get(DcMotorEx.class,"int");
 
 
 

@@ -42,7 +42,7 @@ public class Transfer {
 
     private  AnalogInput encoder;
 
-    public static double hingeUp = .41,hingeDown = .35;
+    public static double hingeUp = .43,hingeDown = .38;
 
     private PIDFController controller,Scontroller;
 
@@ -123,12 +123,12 @@ public class Transfer {
 //        return deg;
     }
 
-    public double getPositionDegAbs(){
-
-        return ((encoder.getVoltage() / 3.2 * 360 + offsetAngle) % 360);
-//        return  (encoder.getVoltage() / 3.2 * 360+offsetAngle) % 360;
-//            return encoder.getVoltage();
-    }
+//    public double getPositionDegAbs(){
+//
+//        return ((encoder.getVoltage() / 3.2 * 360 + offsetAngle) % 360);
+////        return  (encoder.getVoltage() / 3.2 * 360+offsetAngle) % 360;
+////            return encoder.getVoltage();
+//    }
 
     public double getPosition() {
         double ticks = motor.getCurrentPosition();

@@ -9,13 +9,19 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Subsystems.Transfer;
 import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 
 @Config
 @TeleOp
 public class testTurret extends LinearOpMode {
     public static double tru;
+
+    Transfer transfer;
+
+    ElapsedTime timer;
 
 
     @Override
@@ -24,14 +30,20 @@ public class testTurret extends LinearOpMode {
 //        Servo hinge = hardwareMap.servo.get("hinge");
 //        CRServo tur =hardwareMap.crservo.get("tur");
         Turret turret = new Turret(hardwareMap);
-//        DcMotorEx enc = hardwareMap.get(DcMotorEx.class,"fr");
+        DcMotorEx e = hardwareMap.get(DcMotorEx.class,"bl");
+        transfer = new Transfer(hardwareMap);
+        timer = new ElapsedTime();
+        timer.reset();
+//        DcMotorEx enc = hardwareMap.get(Dc MotorEx.class,"fr");
 //        enc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
 //        tur.setDirection(Servo.Direction.REVERSE);
         waitForStart();
         while(opModeIsActive()){
+            turret.setYaw(tru);
             turret.update();
+            transfer.update(timer.seconds());
 
             if(gamepad1.aWasPressed()){
                 if (!gamepad1.isRumbling())  // Check for possible overlap of rumbles.

@@ -41,6 +41,8 @@ public class Shooter {
 
     public static double pSwitch = 200;
 
+    private double errorLimit = 100;
+
     public static double close = .1,far =.8;
     private boolean activated = true;
 
@@ -135,30 +137,37 @@ public class Shooter {
         }
     }
 
+    public void setErrorLimit(double x){
+        errorLimit= x;
+    }
+
 
 
     public boolean atTarget() {
-        return Math.abs((getTarget()- getVelocity())) < 100;
+        return Math.abs((getTarget()- getVelocity())) < errorLimit;
     }
     //-0.00190711x^{2}+0.438204x+56.27323
     public static double hoodRegA=-0.00190711,hoodRegB=0.438204,hoodRegC=56.27323;
 
-    //y=0.0510743x^{2}+1.90001x+1975.57062
-    public static double shooterRegA=0.0510743,shooterRegB=1.90001,shooterRegC=1975.57062;
+    //y=6.8669x+2362.25888
+    public static double shooterRegA=6.8669,shooterRegB=2362.25888;
 
 
     public void forDistanceHood(double distance){
-        setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
+//        setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
+        setHood(81);
+
     }
     public void forDistance(double distance) {
 
-        setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
-        setTarget(shooterRegA*Math.pow(distance,2)+shooterRegB*Math.pow(distance,1)+shooterRegC);
+//        setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
+        setHood(81);
+        setTarget(shooterRegA*Math.pow(distance,1)+shooterRegB);
     }
     public void forDistance(double distance,double offset) {
 
         setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
-        setTarget(shooterRegA*Math.pow(distance,2)+shooterRegB*Math.pow(distance,1)+shooterRegC+offset);
+        setTarget(shooterRegA*Math.pow(distance,1)+shooterRegB+offset);
     }
 
 
