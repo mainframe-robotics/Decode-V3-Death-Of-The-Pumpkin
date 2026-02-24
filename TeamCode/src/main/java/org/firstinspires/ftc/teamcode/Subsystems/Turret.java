@@ -20,7 +20,7 @@ public class Turret {
 
     private PIDFController bigC,smallC;
 
-    public static double bigKp=0.024,bigKi=0,bigKd=0.0014,bigKf=0,smallKp=0.05,smallKd=0.0007;
+    public static double bigKp=0.024,bigKi=0,bigKd=0.00165,bigKf=0,smallKp=0.045,smallKd=0.0002;
 //    public static double bigKp=0.035,bigKi=0,bigKd=0.0025,bigKf=0,smallKp=0.06,smallKi,smallKd=0.001,smallKf;
 
     public static boolean on = true;
@@ -28,7 +28,7 @@ public class Turret {
 
     public static double target =0;
     private double manualPower;
-    public static double lowerLimit =-90,upperLimit=90;
+    public static double lowerLimit =-140,upperLimit=140;
 
     private double prevMotor;
 
@@ -133,25 +133,28 @@ public class Turret {
         if (angle > 180) angle -= 360;
         return angle;
     }
+//y=4.1185\cdot\sin\left(0.0233266x-0.0800377\right)-0.914765
+    double offsetRegA = 4.1185,offsetRegB=0.0233266,offsetRegC=-0.0800377,offsetRegD=-0.914765;
 
 
 
     public double facePoint(Pose targetPose, Pose robotPose,double distance) {
-        Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
-        if(distance>=117.5){
-            targetPose = new Pose(targetPose.getX()+8,targetPose.getY()+0);
-        }
+        Pose ballPose = new Pose(robotPose.getX()+0*Math.cos(robotPose.getHeading()), robotPose.getY()+0*Math.sin(robotPose.getHeading()));
+//        if(distance>=117.5){
+//            targetPose = new Pose(targetPose.getX()+8,targetPose.getY()+0);
+//        }
 
         double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
         double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
+        double offset = offsetRegA*Math.sin(offsetRegB*robotAngleDiff+offsetRegC)+offsetRegD;
         setYaw(robotAngleDiff);
         return robotAngleDiff;
     }
-    public void facePoint(Pose targetPose, Pose robotPose, double distance, double Offsetx,double Offsety) {
-        Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
-        if(distance>=117.5){
-            targetPose = new Pose(targetPose.getX()+Offsetx,targetPose.getY()+Offsety);
-        }
+    public void facePoint(Pose targetPose, Pose robotPose, double distance, double ball,double offset) {
+        Pose ballPose = new Pose(robotPose.getX()+ball*Math.cos(robotPose.getHeading()), robotPose.getY()+ball*Math.sin(robotPose.getHeading()));
+//        if(distance>=117.5){
+//            targetPose = new Pose(targetPose.getX()+Offsetx,targetPose.getY()+Offsety);
+//        }
         double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));
         double robotAngleDiff = normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
 //        if (distance >= 117.5)
@@ -160,7 +163,7 @@ public class Turret {
 //        }else{
 //            setYaw(robotAngleDiff);
 //        }
-        setYaw(robotAngleDiff);
+        setYaw(robotAngleDiff+offset);
     }
 
     public void facePoint2(Pose targetPose, Pose robotPose) {

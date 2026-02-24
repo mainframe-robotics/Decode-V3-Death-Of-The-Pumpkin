@@ -15,6 +15,7 @@ import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -61,8 +62,8 @@ public class Blue15BallClose extends OpMode {
 
     private final Pose shoot2Pose = new Pose(63, 75, Math.toRadians(180));//old x: 50, y: 83.4
 
-//    private final Pose intake2Pose = new Pose(14, 64, Math.toRadians(157));
-//    private final Pose intake2PoseControl = new Pose(41, 31.5);
+    private final Pose intake2Pose = new Pose(14, 64, Math.toRadians(157));
+    private final Pose intake2PoseControl = new Pose(41, 31.5);
 
 
     private final Pose shoot3Pose = new Pose(63, 75, Math.toRadians(180));// old x: 70, y: 74
@@ -118,19 +119,19 @@ public class Blue15BallClose extends OpMode {
                 .build();
 
         /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
-//        intakeSet2 = follower.pathBuilder()
-//                .addPath(new BezierLine(shoot2Pose, intake2Pose))
-//                .setLinearHeadingInterpolation(shoot2Pose.getHeading(),intake2Pose.getHeading())
-//                .build();
+        intakeSet2 = follower.pathBuilder()
+                .addPath(new BezierLine(shoot2Pose, intake2Pose))
+                .setLinearHeadingInterpolation(shoot2Pose.getHeading(),intake2Pose.getHeading())
+                .build();
 
         /* This is our scorePickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
-//        scoreSet2 = follower.pathBuilder()
-//                .addPath(new BezierLine(intake2Pose, shoot3Pose))
-//                .setLinearHeadingInterpolation(intake2Pose.getHeading(),shoot3Pose.getHeading())
-//                .setVelocityConstraint(.05)
-//                .setTimeoutConstraint(200)
-////                .setReversed()
-//                .build();
+        scoreSet2 = follower.pathBuilder()
+                .addPath(new BezierLine(intake2Pose, shoot3Pose))
+                .setLinearHeadingInterpolation(intake2Pose.getHeading(),shoot3Pose.getHeading())
+                .setVelocityConstraint(.05)
+                .setTimeoutConstraint(200)
+//                .setReversed()
+                .build();
 
         intakeSet3 = follower.pathBuilder()
                 .addPath(new BezierCurve(shoot2Pose,intake3PoseControl, intake3Pose))
@@ -278,49 +279,26 @@ public class Blue15BallClose extends OpMode {
     public void autonomousPathUpdate(double sec,double dist) {
         switch (pathState) {
             case 0:
-                intPow=-1;
+                intPow=0;
                 turTarg=54;
-                transfer.retract();
+                transfer.setManual();
+                transfer.score();
                 follower.followPath(scorePreload);
                 shooterOn=true;
-                setPathState(100);
-                break;
-            case 100:
-                if(pathTimer.getElapsedTimeSeconds()>1){
-                    transfer.spinToScore(sec);
-                    setPathState(101);
-
-                }
-                break;
-            case 101:
-                if (transfer.atTarget()){
-                    transfer.score();
-                    setPathState(102);
-                }
-                break;
-            case 102:
-                if(pathTimer.getElapsedTimeSeconds()>1){
-                    transfer.setTargetDeg(transfer.wrap360(transfer.getPositionDeg() + 45), sec);
-                    setPathState(103);
-                }
-                break;
-            case 103:
-                if(!follower.isBusy()&&shooter.atTarget()&& transfer.atTarget()){
-                    setPathState(104);
-                }
+                setPathState(104);
                 break;
             case 104:
-                if(pathTimer.getElapsedTimeSeconds()>.75){
-                    transfer.startTransfer(.8,true);
+                if(pathTimer.getElapsedTimeSeconds()>2&&!follower.isBusy()){
+                    transfer.startTransfer(dist);
                     setPathState(105);
                 }
                 break;
             case 105:
-                if(pathTimer.getElapsedTimeSeconds()>1){
+                if(pathTimer.getElapsedTimeSeconds()>.8){
                     transfer.endTransfer();
                     transfer.setAuto();
                     transfer.retract();
-                    transfer.setTargetDeg(transfer.wrap360(-20),sec);
+                    transfer.setTargetDeg(transfer.wrap360(-30),sec);
 //                    intake.setPower(-1);
                     shooterOn=false;
                     setPathState(1);
@@ -338,8 +316,14 @@ public class Blue15BallClose extends OpMode {
                     transfer.retract();
                     transfer.retract();
                     intPow=-1;
-                    transfer.setTargetDeg(transfer.wrap360(-20),sec);
+                    transfer.setTargetDeg(transfer.wrap360(-30),sec);
                     follower.followPath(intakeSet1, true);
+                    setPathState(112);
+                }
+                break;
+            case 112:
+                if (follower.getCurrentTValue()>.9){
+                    transfer.setTargetDeg(transfer.wrap360(-30-122),sec);
                     setPathState(12);
                 }
                 break;
@@ -366,45 +350,45 @@ public class Blue15BallClose extends OpMode {
                     transfer.retract();
                     shooterOn=true;
                     follower.followPath(scoreSet1, true);
-                    setPathState(300);
-                }
-                break;
-
-            case 300:
-                if(pathTimer.getElapsedTimeSeconds()>2){
-//                    intake.setPower(0);
-//                    intPow=1;
-                    transfer.spinToScore(sec);
-                    setPathState(301);
-
-                }
-                break;
-            case 301:
-                if (transfer.atTarget()){
-                    transfer.score();
-                    setPathState(302);
-                } else if (pathTimer.getElapsedTimeSeconds()>3) {
-                    intPow=1;
-                }
-                break;
-            case 302:
-                if(pathTimer.getElapsedTimeSeconds()>1){
-//                    intake.setPower(0);
-                    transfer.setTargetDeg(transfer.wrap360(transfer.getPositionDeg() + 45), sec);
-                    setPathState(303);
-                }
-                break;
-            case 303:
-                if(!follower.isBusy()&&shooter.atTarget()&& transfer.atTarget()){
                     setPathState(304);
                 }
-                else if (pathTimer.getElapsedTimeSeconds()>3) {
-                    intPow=1;
-                }
                 break;
+
+//            case 300:
+//                if(pathTimer.getElapsedTimeSeconds()>2){
+////                    intake.setPower(0);
+////                    intPow=1;
+//                    transfer.spinToScore(sec);
+//                    setPathState(301);
+//
+//                }
+//                break;
+//            case 301:
+//                if (transfer.atTarget()){
+//                    transfer.score();
+//                    setPathState(302);
+//                } else if (pathTimer.getElapsedTimeSeconds()>3) {
+//                    intPow=1;
+//                }
+//                break;
+//            case 302:
+//                if(pathTimer.getElapsedTimeSeconds()>1){
+////                    intake.setPower(0);
+//                    transfer.setTargetDeg(transfer.wrap360(transfer.getPositionDeg() + 45), sec);
+//                    setPathState(303);
+//                }
+//                break;
+//            case 303:
+//                if(!follower.isBusy()&&shooter.atTarget()&& transfer.atTarget()){
+//                    setPathState(304);
+//                }
+//                else if (pathTimer.getElapsedTimeSeconds()>3) {
+//                    intPow=1;
+//                }
+//                break;
             case 304:
-                if(pathTimer.getElapsedTimeSeconds()>.75){
-                    transfer.startTransfer(.8,true);
+                if(!follower.isBusy()&&shooter.atTarget()&& transfer.atTarget()&&turret.atTarget()){
+                    transfer.startTransfer(.9,true);
                     setPathState(305);
                 }
                 break;
@@ -413,7 +397,7 @@ public class Blue15BallClose extends OpMode {
                     transfer.endTransfer();
                     transfer.setAuto();
                     transfer.retract();
-                    transfer.setTargetDeg(transfer.wrap360(-20),sec);
+                    transfer.setTargetDeg(transfer.wrap360(-30),sec);
                     intPow=-1;
                     shooterOn=false;
                     setPathState(5);
@@ -626,6 +610,9 @@ public class Blue15BallClose extends OpMode {
     Turret turret;
     @Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
         double sec = opmodeTimer.getElapsedTimeSeconds();
 
         // These loop the movements of the robot, these must be called continuously in order to work
@@ -676,6 +663,8 @@ public class Blue15BallClose extends OpMode {
         telemetry.addData("shooter velo: ",shooter.getVelocity());
         telemetry.update();
     }
+    List<LynxModule> allHubs;
+
 
 
     /**
@@ -702,7 +691,11 @@ public class Blue15BallClose extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
+        allHubs = hardwareMap.getAll(LynxModule.class);
 
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
     }
 
     /**

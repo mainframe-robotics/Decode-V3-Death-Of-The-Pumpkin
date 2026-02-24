@@ -9,6 +9,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.ftc.InvertedFTCCoordinates;
 import com.pedropathing.ftc.PoseConverter;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -52,7 +53,8 @@ public class TeleOpBNew extends LinearOpMode {
 
     ElapsedTime shootStateTimer,sortTimer,timer;
 
-    public static double goalX=6,goalY=140;
+    public static double goalX=0,goalY=144;
+    public static double goalXFar=5,goalYFar=142;
 
     public static Pose goalPose = new Pose(goalX, goalY);
     private DcMotor intake;
@@ -64,6 +66,8 @@ public class TeleOpBNew extends LinearOpMode {
     private boolean readyToShoot;
 
     private boolean turLock;
+    boolean far = false;
+    public static double hoodOffse;
 
 
     @Override
@@ -86,20 +90,39 @@ public class TeleOpBNew extends LinearOpMode {
 
         intake = hardwareMap.dcMotor.get("int");
 
+
         readyToShoot=false;
 
         shootStateTimer=new ElapsedTime();
         sortTimer=new ElapsedTime();
         timer=new ElapsedTime();
         timer.reset();
-        shooter.setErrorLimit(200);
+        shooter.setErrorLimit(100);
 
+
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
 
         waitForStart();
-        while (opModeIsActive()) {
+        while (opModeIsActive()){
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }
 
             double sec=timer.seconds();
-            goalPose = new Pose(goalX, goalY);
+            double dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
+            far = dist>=117.5;
+            if(dist>=117.5) {
+                goalPose = new Pose(goalXFar, goalYFar);
+
+            }
+            else {
+                goalPose = new Pose(goalX, goalY);
+
+            }
 
 
             if(gamepad1.xWasPressed()&&isSlowMode()){
@@ -108,11 +131,11 @@ public class TeleOpBNew extends LinearOpMode {
                 setSlowMode();
             }
             follower.setTeleOpDrive(
-                    gamepad1.left_stick_y*driveMult ,
-                    gamepad1.left_stick_x*driveMult ,
+                    -gamepad1.left_stick_y*driveMult ,
+                    -gamepad1.left_stick_x*driveMult ,
                     -gamepad1.right_stick_x*rotateMult , true);
 
-            double dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
+            dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
 
             if(gamepad1.dpad_up){
                 setRobotPoseFromCamera();
@@ -123,7 +146,7 @@ public class TeleOpBNew extends LinearOpMode {
             }
 
             if(gamepad1.dpad_down){
-                follower.setPose(new Pose(133.67,9,Math.toRadians(90)));
+                follower.setPose(new Pose(72,72,Math.toRadians(90)));
             }
 
 
@@ -155,6 +178,8 @@ public class TeleOpBNew extends LinearOpMode {
                 transfer.setTargetDeg(transfer.wrap360(-30),sec);
             }
 
+
+
             //rotate unsort spindex
             if(gamepad1.rightBumperWasPressed()&&!readyToShoot&&intakeState==0){
                 transfer.setAuto();
@@ -164,7 +189,11 @@ public class TeleOpBNew extends LinearOpMode {
                 stateSorted=-1;
                 stateUnsorted=0;
                 stateShoot=-1;
+            }
 
+            if(gamepad1.rightBumperWasPressed()&&readyToShoot&&stateUnsorted==0){
+                transfer.setAuto();
+                transfer.setTargetDeg(transfer.wrap360(-30-122-122),sec);
             }
 
             if(intakeState==1&&stateSorted==-1&&stateUnsorted==-1&& stateShoot ==-1){
@@ -195,15 +224,20 @@ public class TeleOpBNew extends LinearOpMode {
 
             if(stateUnsorted!=-1||stateSorted!=-1||stateShoot!=-1){
                 shooter.on();
-                shooter.forDistance(dist);
+                shooter.forDistance(dist,0,hoodOffse);
             }
-            if(intakeState!=-1){
+            if(intakeState!=-1&&far){
 //                shooter.off();
                 shooter.on();
-                shooter.setTarget(1000);
+                shooter.setTarget(2800);
+            }
+            if(intakeState!=-1&&!far){
+                shooter.off();
+//                shooter.on();
+//                shooter.setTarget(1000);
             }
 
-            intake.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
+            intake.setPower(-(gamepad1.left_trigger-gamepad1.right_trigger));
 
             if(readyToShoot&&shooter.atTarget()){
                 if (!gamepad1.isRumbling())  // Check for possible overlap of rumbles.
@@ -216,6 +250,8 @@ public class TeleOpBNew extends LinearOpMode {
             if(turLock){
                 turret.setYaw(0);
             }
+
+            shooter.forDistanceHood(dist,hoodOffse);
 
 
 
@@ -244,6 +280,7 @@ public class TeleOpBNew extends LinearOpMode {
             telemetry.addData("motionTarget Transfer: ",transfer.getMotionTargetDeg());
             telemetry.addData("posTranfer: ",transfer.getPositionDeg());
             telemetry.addData("transfer power: ",transfer.getPower());
+            telemetry.addData("turret error: ",turret.getTarget()-turret.getPosition());
 
             telemetry.addData("ready to shoot: ",readyToShoot);
 
@@ -329,7 +366,7 @@ public class TeleOpBNew extends LinearOpMode {
                 break;
             case 0:
                 //transfer.startSpinRamp(startSpeed,endSpeed,duration,time);
-                transfer.startTransfer(.6,true);
+                transfer.startTransfer((far)?.6:1,true);
                 stateShoot =1;
                 shootStateTimer.reset();
                 break;

@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
 
 @Config
+//@Configurable
 public class PedroDashTuning {
     public static PIDFCoefficients translational = new PIDFCoefficients(
-            0.1,
+            0.15,
             0,
             0.01,
             0.02
@@ -26,9 +28,9 @@ public class PedroDashTuning {
             0.03
     );
     public static PIDFCoefficients secondaryHeading = new PIDFCoefficients(
-            2,
+            1.7,
             0,
-            0.09,
+            0.05,
             0.03
     );
 
@@ -48,4 +50,6 @@ public class PedroDashTuning {
     );
 
     public static double centri=.005;
+    public static double brakeStrength=.91;
+    public static double breakStart=1;
 }

@@ -15,6 +15,7 @@ import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -525,6 +526,9 @@ public class Blue6BallFarRP extends OpMode {
     Turret turret;
     @Override
     public void loop() {
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
         double sec = opmodeTimer.getElapsedTimeSeconds();
 
         // These loop the movements of the robot, these must be called continuously in order to work
@@ -581,7 +585,7 @@ public class Blue6BallFarRP extends OpMode {
         telemetry.update();
     }
 
-
+    List<LynxModule> allHubs;
     /**
      * This method is called once at the init of the OpMode.
      **/
@@ -606,7 +610,11 @@ public class Blue6BallFarRP extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startPose);
+        allHubs = hardwareMap.getAll(LynxModule.class);
 
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
     }
 
     /**

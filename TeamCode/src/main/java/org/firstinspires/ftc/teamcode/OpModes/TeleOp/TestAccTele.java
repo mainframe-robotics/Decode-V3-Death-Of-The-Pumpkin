@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import java.util.Arrays;
+import java.util.List;
 
 @TeleOp
 @Config
@@ -26,7 +28,7 @@ public class TestAccTele extends LinearOpMode {
     Transfer transfer;
     Turret turret;
 
-    public static double goalX=4,goalY=140;
+    public static double goalX=0,goalY=144;
 
     public static Pose goalPose = new Pose(goalX, goalY);
 
@@ -35,7 +37,7 @@ public class TestAccTele extends LinearOpMode {
     private ElapsedTime timer;
 
     public static double ange=0.5;
-    public static double ball=3;
+    public static double ball=0;
     public static double turA=0;
     public static double offX=0;
     public static double offY=0;
@@ -69,8 +71,19 @@ public class TestAccTele extends LinearOpMode {
         timer = new ElapsedTime();
         timer.reset();
         String x = "PGP";
+
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
         waitForStart();
         while (opModeIsActive()){
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }
+
             double sec = timer.seconds();
             goalPose = new Pose(goalX, goalY);
 
@@ -78,10 +91,9 @@ public class TestAccTele extends LinearOpMode {
                 transfer.retract();
             } else if (gamepad1.dpadDownWasPressed()) {
                 transfer.score();
-
             }
 
-            intake.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
+            intake.setPower(-(gamepad1.left_trigger-gamepad1.right_trigger));
 
             shooter.setTarget(velo);
             shooter.setHood(ange);
@@ -93,11 +105,11 @@ public class TestAccTele extends LinearOpMode {
             double xx =ange/(360-37.8)-.0586592;
             double maxRange = 360-37.8;
 //
-            turret.setYaw(turA);
+//            turret.setYaw(turA);
 
             double distance = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
 
-            turret.facePoint(goalPose,follower.getPose(), distance, offX,offY);
+            turret.facePoint(goalPose,follower.getPose(), distance,ball,turA);
 
             transfer.update(sec);
             turret.update();
@@ -114,6 +126,8 @@ public class TestAccTele extends LinearOpMode {
             telemetry.addData("targetTranfer: ",transfer.getTargetDeg());
             telemetry.addData("posTranfer: ",transfer.getPositionDeg());
             telemetry.addData("posTranferRaw: ",transfer.getPosition());
+
+
 //            telemetry.addData("posTranferAbs: ",transfer.getPositionDegAbs());
 
 
@@ -125,15 +139,18 @@ public class TestAccTele extends LinearOpMode {
             telemetry.addData("follower dist to goal:", Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY()));
 
             Pose robotPose = follower.getPose();
-            Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
+            Pose ballPose = new Pose(robotPose.getX()+ball*Math.cos(robotPose.getHeading()), robotPose.getY()+ball*Math.sin(robotPose.getHeading()));
             telemetry.addData("ball pose x:",ballPose.getX());
             telemetry.addData("ball pose y:",ballPose.getY());
             telemetry.addData("ball dist to goal:", Math.hypot(goalPose.getX()-ballPose.getX(),goalPose.getY()-ballPose.getY()));
-
+            double angleToTargetFromCenter = Math.toDegrees(Math.atan2(goalPose.getY() - ballPose.getY(), goalPose.getX() - ballPose.getX()));
+            double robotAngleDiff = turret.normalizeAngle(Math.toDegrees(robotPose.getHeading())-angleToTargetFromCenter );
+            telemetry.addData("robot heading to goal:",robotAngleDiff);
             telemetry.addData("shooter tar: ",shooter.getTarget());
             telemetry.addData("shooter velo: ",shooter.getVelocity());
             telemetry.addData("turret tar: ",turret.getTarget());
             telemetry.addData("turret velo: ",turret.getPosition());
+            telemetry.addData("turret error: ",turret.getTarget()-turret.getPosition());
             telemetry.update();
 
         }

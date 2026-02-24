@@ -42,7 +42,7 @@ public class Transfer {
 
     private  AnalogInput encoder;
 
-    public static double hingeUp = .43,hingeDown = .38;
+    public static double hingeUp = .375,hingeDown = .33;
 
     private PIDFController controller,Scontroller;
 
@@ -52,7 +52,7 @@ public class Transfer {
 
     private ElapsedTime timer;
 
-    public static double vMax=3800, aMax =2600;
+    public static double vMax=2000, aMax =1750;
 
     private boolean spinning = false;
 

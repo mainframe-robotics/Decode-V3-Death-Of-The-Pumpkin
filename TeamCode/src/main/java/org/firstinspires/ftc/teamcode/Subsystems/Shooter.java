@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.util.InterpLUT;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,8 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 @Config
 public class Shooter {
@@ -37,7 +34,7 @@ public class Shooter {
     hoodT*servoRatio= servo pos
 
      */
-    public static double bp = 0.002, bd = 0.0, bf =0.000185, sp = 0.002, sd = 0.000, sf = 0.0;
+    public static double bp = 0.002, bd = 0.0, bf =0.00019, sp = 0.002, sd = 0.000, sf = 0.0;
 
     public static double pSwitch = 200;
 
@@ -66,7 +63,7 @@ public class Shooter {
         //r = hardwareMap.get(DcMotorEx.class, "sr");
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor2.setDirection(DcMotorSimple.Direction.FORWARD);
-        hood.setDirection(Servo.Direction.REVERSE);
+//        hood.setDirection(Servo.Direction.REVERSE);
     }
 
     public double getTarget() {
@@ -106,7 +103,7 @@ public class Shooter {
 
     public void setHood(double x){
 //        77.5-68
-        x= Range.clip(x,69,80.4);
+//        x= Range.clip(x,69,80.4);
         hoodT=(x-baseAngle)/hoodRatio;
     }
     public double getHood(){
@@ -146,28 +143,48 @@ public class Shooter {
     public boolean atTarget() {
         return Math.abs((getTarget()- getVelocity())) < errorLimit;
     }
-    //-0.00190711x^{2}+0.438204x+56.27323
-    public static double hoodRegA=-0.00190711,hoodRegB=0.438204,hoodRegC=56.27323;
+//    y=-0.0000475309x^{2}+0.206757x+61.03372
+    public static double hoodRegA=-0.0000475309,hoodRegB=0.206757,hoodRegC=61.03372;
 
-    //y=6.8669x+2362.25888
-    public static double shooterRegA=6.8669,shooterRegB=2362.25888;
+
+//    y=11.79027x+1711.20544
+    public static double shooterRegAClose =11.79027, shooterRegBClose=1711.20544;
+
+    //    y=9.85643x+1865.05147
+    public static double shooterRegAFar =9.85643, shooterRegBFar=1865.05147;
 
 
     public void forDistanceHood(double distance){
-//        setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
-        setHood(81);
+        if(distance>=117.5) {
+            setHood(81);
+        }
+        else{
+            setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
+        }
+
+    }
+    public void forDistanceHood(double distance,double offset){
+        if(distance>=117.5) {
+            setHood(81+offset);
+        }
+        else{
+            setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC+offset);
+        }
 
     }
     public void forDistance(double distance) {
-
-//        setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
-        setHood(81);
-        setTarget(shooterRegA*Math.pow(distance,1)+shooterRegB);
+        forDistance(distance,0,0);
     }
-    public void forDistance(double distance,double offset) {
+    public void forDistance(double distance,double offset,double hoodOffset) {
+        if(distance>=117.5) {
+            setHood(81+hoodOffset);
+            setTarget(shooterRegAFar *Math.pow(distance,1)+ shooterRegBFar +offset);
+        }
+        else{
+            setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC+hoodOffset);
+            setTarget(shooterRegAClose *Math.pow(distance,1)+ shooterRegBClose +offset);
+        }
 
-        setHood(hoodRegA*Math.pow(distance,2)+hoodRegB*Math.pow(distance,1)+hoodRegC);
-        setTarget(shooterRegA*Math.pow(distance,1)+shooterRegB+offset);
     }
 
 

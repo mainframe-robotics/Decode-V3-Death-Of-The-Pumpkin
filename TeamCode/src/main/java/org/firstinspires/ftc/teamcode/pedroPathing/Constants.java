@@ -14,9 +14,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(10.39)
-            .forwardZeroPowerAcceleration(-38.6643)
-            .lateralZeroPowerAcceleration(-59.297021)
+            .mass(11.75)
+            .forwardZeroPowerAcceleration(-55.801)
+            .lateralZeroPowerAcceleration(-78.35)
             .useSecondaryTranslationalPIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryDrivePIDF(true)
@@ -25,9 +25,9 @@ public class Constants {
             .headingPIDFCoefficients(PedroDashTuning.heading)
             .secondaryHeadingPIDFCoefficients(PedroDashTuning.secondaryHeading)
             .drivePIDFCoefficients(PedroDashTuning.drive)
-            .secondaryDrivePIDFCoefficients(PedroDashTuning.secondaryDrive)
-            .holdPointHeadingScaling(0.6)
-            .holdPointTranslationalScaling(1);
+            .secondaryDrivePIDFCoefficients(PedroDashTuning.secondaryDrive);
+//            .holdPointHeadingScaling(0.6)
+//            .holdPointTranslationalScaling(1);
 //            .centripetalScaling(PedroDashTuning.centri);
 
 
@@ -41,8 +41,8 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .xVelocity(75.81)
-            .yVelocity(61.175);
+            .xVelocity(80.83)
+            .yVelocity(63.12);
     public static PinpointConstants localizerConstants = new PinpointConstants()
             .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
@@ -51,7 +51,7 @@ public class Constants {
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD )
             .strafePodX(5.37)
             .forwardPodY(-4.496);
-    public static PathConstraints pathConstraints = new PathConstraints(0.95, 0.1, 0.1, 0.011, 50, .9, 10, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.95, 0.1, 0.1, 0.011, 50, PedroDashTuning.brakeStrength, 10, PedroDashTuning.breakStart);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
