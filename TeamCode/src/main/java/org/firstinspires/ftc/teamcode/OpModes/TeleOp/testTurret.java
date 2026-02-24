@@ -31,7 +31,8 @@ public class testTurret extends LinearOpMode {
 //        tur.setDirection(Servo.Direction.REVERSE);
         waitForStart();
         while(opModeIsActive()){
-//            turret.update();
+            turret.setYaw(0);
+            turret.update();
             telemetry.addData("pos: ", turret.getPosition());
             telemetry.addData("target: ", turret.getTarget());
             telemetry.addData("touchpad 1 x: ", gamepad1.touchpad_finger_1_x);

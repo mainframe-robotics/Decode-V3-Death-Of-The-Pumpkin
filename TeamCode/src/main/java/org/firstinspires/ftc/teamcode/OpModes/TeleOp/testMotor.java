@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Turret;
 
@@ -16,11 +17,14 @@ public class testMotor extends LinearOpMode {
         DcMotor bl = hardwareMap.dcMotor.get("bl");
         DcMotor br = hardwareMap.dcMotor.get("br");
 
+        DcMotorEx intk = hardwareMap.get(DcMotorEx.class,"int");
+
+
         Turret turret =new Turret(hardwareMap);
 
         DcMotor spin = hardwareMap.dcMotor.get("spin");
 
-        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intk.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 

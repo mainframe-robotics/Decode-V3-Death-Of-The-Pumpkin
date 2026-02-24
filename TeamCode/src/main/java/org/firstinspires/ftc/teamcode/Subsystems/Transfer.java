@@ -42,7 +42,7 @@ public class Transfer {
 
     private  AnalogInput encoder;
 
-    public static double hingeUp =.48,hingeDown = .43;
+    public static double hingeUp =.38,hingeDown = .335;
 
     private PIDFController controller,Scontroller;
 
@@ -75,7 +75,7 @@ public class Transfer {
         slot3=hardwareMap.get(RevColorSensorV3.class,"slot3");
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        encoder = hardwareMap.get(AnalogInput.class, "sp1");
+//        encoder = hardwareMap.get(AnalogInput.class, "sp1");
 
 
         timer=new ElapsedTime();
@@ -123,12 +123,12 @@ public class Transfer {
 //        return deg;
     }
 
-    public double getPositionDegAbs(){
-
-        return ((encoder.getVoltage() / 3.2 * 360 + offsetAngle) % 360);
-//        return  (encoder.getVoltage() / 3.2 * 360+offsetAngle) % 360;
-//            return encoder.getVoltage();
-    }
+//    public double getPositionDegAbs(){
+//
+//        return ((encoder.getVoltage() / 3.2 * 360 + offsetAngle) % 360);
+////        return  (encoder.getVoltage() / 3.2 * 360+offsetAngle) % 360;
+////            return encoder.getVoltage();
+//    }
 
     public double getPosition() {
         double ticks = motor.getCurrentPosition();

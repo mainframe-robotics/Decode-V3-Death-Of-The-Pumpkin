@@ -9,6 +9,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.ftc.InvertedFTCCoordinates;
 import com.pedropathing.ftc.PoseConverter;
 import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -52,7 +53,10 @@ public class TeleOpB extends LinearOpMode {
 
     ElapsedTime shootStateTimer,sortTimer,timer;
 
-    public static Pose goalPose = new Pose(6,140);
+    public static double goalX=0,goalY=144;
+    public static double goalXfar=-5,goalYfar=144;
+
+    public static Pose goalPose = new Pose(goalX,goalY);
     private DcMotor intake;
 
     public static double startSpeed;
@@ -62,6 +66,7 @@ public class TeleOpB extends LinearOpMode {
     private boolean readyToShoot;
 
     private boolean turLock;
+    private boolean far;
 
 
     @Override
@@ -90,11 +95,30 @@ public class TeleOpB extends LinearOpMode {
         timer=new ElapsedTime();
         timer.reset();
 
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
 
         waitForStart();
         while (opModeIsActive()) {
-
+            for (LynxModule hub : allHubs) {
+                hub.clearBulkCache();
+            }
             double sec=timer.seconds();
+
+            double dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
+            far = dist>=117.5;
+            if(dist>=117.5) {
+                goalPose = new Pose(goalXfar, goalYfar);
+
+            }
+            else {
+                goalPose = new Pose(goalX, goalY);
+
+            }
+
 
             if(gamepad1.yWasPressed()&&isSlowMode()){
                 setFastMode();
@@ -106,7 +130,7 @@ public class TeleOpB extends LinearOpMode {
                     -gamepad1.left_stick_x*driveMult ,
                     -gamepad1.right_stick_x*rotateMult , true);
 
-            double dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
+             dist = Math.hypot(goalPose.getX()-follower.getPose().getX(),goalPose.getY()-follower.getPose().getY());
 
             if(gamepad1.dpad_right){
                 setRobotPoseFromCamera();
@@ -171,17 +195,23 @@ public class TeleOpB extends LinearOpMode {
             shootPrimedBalls(sec);
 
             if(stateUnsorted!=-1||stateSorted!=-1||stateShoot!=-1){
+
                 shooter.on();
                 shooter.forDistance(dist);
             }
             if(intakeState==0){
-
-                shooter.off();
+                if(far){
+                    shooter.on();
+                    shooter.forDistance(2500);
+                }
+                else {
+                    shooter.off();
+                }
             }
 
-            intake.setPower(gamepad1.left_trigger-gamepad1.right_trigger);
+            intake.setPower(-(gamepad1.left_trigger-gamepad1.right_trigger));
 
-            if(readyToShoot){
+            if(readyToShoot&&shooter.atTarget()){
                 if (!gamepad1.isRumbling())  // Check for possible overlap of rumbles.
                     gamepad1.rumbleBlips(3);
             }

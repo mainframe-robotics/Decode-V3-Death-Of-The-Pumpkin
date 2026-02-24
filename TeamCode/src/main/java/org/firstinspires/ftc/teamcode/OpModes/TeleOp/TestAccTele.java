@@ -114,7 +114,7 @@ public class TestAccTele extends LinearOpMode {
             telemetry.addData("targetTranfer: ",transfer.getTargetDeg());
             telemetry.addData("posTranfer: ",transfer.getPositionDeg());
             telemetry.addData("posTranferRaw: ",transfer.getPosition());
-            telemetry.addData("posTranferAbs: ",transfer.getPositionDegAbs());
+//            telemetry.addData("posTranferAbs: ",transfer.getPositionDegAbs());
 
 
 

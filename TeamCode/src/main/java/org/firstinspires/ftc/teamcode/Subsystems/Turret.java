@@ -38,7 +38,7 @@ public class Turret {
         motor=hardwareMap.get(CRServo.class,"tur");
 //        motor.setDirection(CRServo.Direction.REVERSE);
 
-        encoder=hardwareMap.get(DcMotorEx.class,"fr");
+        encoder=hardwareMap.get(DcMotorEx.class,"int");
 
 
 
@@ -137,7 +137,7 @@ public class Turret {
     public void facePoint(Pose targetPose, Pose robotPose,double distance) {
         Pose ballPose = new Pose(robotPose.getX()+3*Math.cos(robotPose.getHeading()), robotPose.getY()+3*Math.sin(robotPose.getHeading()));
         if(distance>=117.5){
-            targetPose = new Pose(targetPose.getX()+8,targetPose.getY()+0);
+            targetPose = new Pose(targetPose.getX()+0,targetPose.getY()+0);
         }
 
         double angleToTargetFromCenter = Math.toDegrees(Math.atan2(targetPose.getY() - ballPose.getY(), targetPose.getX() - ballPose.getX()));

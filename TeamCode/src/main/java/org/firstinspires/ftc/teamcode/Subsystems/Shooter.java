@@ -60,11 +60,11 @@ public class Shooter {
         motor = hardwareMap.get(DcMotorEx.class, "shootL");
         motor2 = hardwareMap.get(DcMotorEx.class, "shootR");
 
-        hood = hardwareMap.get(Servo.class,"hood1");
+        hood = hardwareMap.get(Servo.class,"hood");
         //r = hardwareMap.get(DcMotorEx.class, "sr");
         motor.setDirection(DcMotorSimple.Direction.REVERSE);
         motor2.setDirection(DcMotorSimple.Direction.FORWARD);
-        hood.setDirection(Servo.Direction.REVERSE);
+        hood.setDirection(Servo.Direction.FORWARD);
     }
 
     public double getTarget() {
